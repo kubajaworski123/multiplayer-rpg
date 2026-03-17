@@ -140,7 +140,7 @@ public class FrameRenderer
             StringBuilder mapRow = new StringBuilder();
             for (int x = 0; x < W; x++)
             {
-                if (x == player.X && y == player.Y) mapRow.Append('¶');
+                if (x == player.X && y == player.Y) mapRow.Append("\x1b[34m"+'¶'+ "\x1b[0m");
                 else mapRow.Append(map.Tiles[x, y].Symbol);
             }
             mid.Add(mapRow.ToString().PadRight(middlePanelWidth));

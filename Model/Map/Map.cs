@@ -24,33 +24,31 @@ public class Map
             Tiles[x, y].RemoveMapEntity(entity);
         }
     }
-    public Map(int width, int height)
+
+    public List<Tile> GetNonWallTiles()
     {
-        Width = width;
-        Height = height;
-        Tiles = new Tile[Width, Height];
+        var nonWallTiles = new List<Tile>();
         for (int x = 0; x < Width; x++)
         {
             for (int y = 0; y < Height; y++)
             {
-                if( x == 0 || x == Width - 1 || y == 0 || y == Height - 1 || (x == 10 && y != 10))
-                {
-                    Tiles[x, y] = new Tile('█', true);
-                }
-                else
-                {
-                    Tiles[x, y] = new Tile(' ', false);
-                }
-                
+                if(!Tiles[x, y].IsWall)
+                    nonWallTiles.Add(Tiles[x, y]);
             }
         }
-        Tiles[2, 2].AddMapEntity(new OneHandedWeapon("Short Sword", 's', 2));
-        Tiles[3, 5].AddMapEntity(new OneHandedWeapon("Short Axe", 'a', 10));
-        Tiles[19, 12].AddMapEntity(new TwoHandedWeapon("Great Sword", 'S', 69));
-        Tiles[5, 3].AddMapEntity(new Item("key", 'k'));
-        Tiles[30, 12].AddMapEntity(new Item("collectible", 'c'));
-        Tiles[20, 15].AddMapEntity(new Item("junk", 'j'));
-        Tiles[35, 16].AddMapEntity(new Gold("gold", 'G', 10));
-        Tiles[8, 6].AddMapEntity(new Money("money", 'M', 100));
+        return nonWallTiles;
     }
+    public Map(int width, int height, bool isWall)
+    {
+        Width = width; Height = height;
+        Tiles = new Tile[Width, Height];
+        for (int i = 0; i < Width; i++)
+        {
+            for (int j = 0; j < Height; j++)
+            {
+                Tiles[i, j] = new Tile(isWall);
+            }
+        }
+    }
+
 }

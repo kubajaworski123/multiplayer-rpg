@@ -46,11 +46,14 @@ public class MovementHandler : InputHandler
                 break;
         }
 
-        if (isMovementKey && CanMoveTo(newX, newY))
+        if (isMovementKey)
         {
+            if (CanMoveTo(newX, newY))
+            {
                 _player.X = newX;
                 _player.Y = newY;
                 _onSuccessfulMove?.Invoke();
+            }
         }
         else
         {

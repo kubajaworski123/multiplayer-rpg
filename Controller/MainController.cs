@@ -24,7 +24,6 @@ public class MainController
         _isRunning = true;
         InitializeInputChain();
     }
-
     private void InitializeInputChain()
     {
         Action refreshView = () =>
@@ -69,16 +68,25 @@ public class MainController
             }
         };
 
+        Action<ConsoleKeyInfo> SignalizeUnknownInput = (key) =>
+        {
+            Logger.SingletonLogger.Add($"Unknown key: {key.Key}");
+            _renderer.GetNewFrame(_map, _player);
+            _renderer.RenderFrame();
+        };
+
         var systemHandler = new SystemActionHandler(StopRunning);
         var movementHandler = new MovementHandler(_player, _map, refreshView);
         var pickupHandler = new PickupHandler(_player, _map, Pickup);
         var equipHandler = new EquipHandler(_player, QuickEquip);
         var dropHandler = new DropHandler(_player, QuickDrop);
+        var unknownInputHandler = new UnknownInputHandler(SignalizeUnknownInput);
 
         systemHandler.SetNextHandler(movementHandler);
         movementHandler.SetNextHandler(pickupHandler);
         pickupHandler.SetNextHandler(equipHandler);
         equipHandler.SetNextHandler(dropHandler);
+        dropHandler.SetNextHandler(unknownInputHandler);
 
         _inputChain = systemHandler;
     }

@@ -6,11 +6,25 @@ using System.Text;
 
 namespace MazeGame.Model.Map;
 
-public class Tile(char symbol = ' ', bool isWall = false)
+public class Tile
 {
-    public char Symbol { get; private set; } = symbol;
-    public bool IsWall { get; private set; } = isWall;
+    public char Symbol { get; private set; }
+    public bool IsWall { get; private set; }
     public List<MapEntity> MapEntities { get; private set; } = new List<MapEntity>();
+    public Tile(bool isWall)
+    {
+        IsWall = isWall;
+        UpdateSymbol();
+    }
+
+    public void Dig()
+    {
+        if (IsWall)
+        {
+            IsWall = false;
+            UpdateSymbol() ;
+        }
+    }
     public void AddMapEntity(MapEntity entity)
     {
         MapEntities.Add(entity);

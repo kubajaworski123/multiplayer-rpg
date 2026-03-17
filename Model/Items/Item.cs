@@ -8,6 +8,19 @@ namespace MazeGame.Model.Items;
 
 public class Item(string name, char symbol) : MapEntity(name, symbol)
 {
+    public static List<Item> Items { get; private set; } = new List<Item>()
+    {
+        new Item("Rusty Key", 'k'),
+        new Item("Golden Skeleton Key", 'K'),
+        new Item("Mysterious Scroll", 's'),
+        new Item("Broken Compass", 'c'),
+        new Item("Silver Chalice", 'C'),
+        new Item("Dusty Tome", 't'),
+        new Item("Glowing Gem", 'g'),
+        new Item("Strange Gear", 'G'),
+        new Item("Torn Map", 'm'),
+        new Item("Empty Bottle", 'b')
+    };
     public override void PickUp(Player player)
     {
         player.AddToInventory(this);
