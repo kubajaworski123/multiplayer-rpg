@@ -1,6 +1,7 @@
 ﻿using MazeGame.Model.Items;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace MazeGame.Model.Map;
@@ -47,6 +48,21 @@ public class Map
             for (int j = 0; j < Height; j++)
             {
                 Tiles[i, j] = new Tile(isWall);
+            }
+        }
+    }
+
+    public Tile this[int x, int y]
+    {
+        get
+        {
+            if(x >= 0 && x < Width && y < Height && y >= 0)
+            {
+                return Tiles[x, y];
+            }
+            else
+            {
+                throw new IndexOutOfRangeException("map[]");
             }
         }
     }

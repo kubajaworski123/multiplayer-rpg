@@ -1,0 +1,96 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading;
+
+public class SubtitlesRenderer
+{
+    private Random _random = new Random();
+
+    public void DisplaySubs(List<string> subs)
+    {
+        Console.Clear();
+        int height = Console.WindowHeight;
+        int drawWidth = Console.WindowWidth - 1;
+        List<string> canvas = new List<string>();
+
+        for (int i = 0; i < height; i++)
+        {
+            canvas.Add(SubtitlesUtils.GenerateStarLine(drawWidth, string.Empty));
+        }
+
+        foreach (var line in subs)
+        {
+            canvas.Add(SubtitlesUtils.GenerateStarLine(drawWidth, line));
+        }
+        for (int i = 0; i < 2; i++)
+        {
+            canvas.Add(SubtitlesUtils.GenerateStarLine(drawWidth, string.Empty));
+        }
+        List<string> banner = new List<string>()
+        {
+            ".      .     T h i s   i s   t h e   g a l a x y   o f   . . .             .",
+            ".        .               .       .     .            .",
+            "   .           .        .                     .        .            .",
+            "             .               .    .          .              .   .         .",
+            "               _________________      ____         __________",
+            " .       .    /                 |    /    \\    .  |          \\",
+            "     .       /    ______   _____| . /      \\      |    ___    |     .     .",
+            "             \\    \\    |   |       /   /\\   \\     |   |___>   |",
+            "           .  \\    \\   |   |      /   /__\\   \\  . |         _/               .",
+            " .     ________>    |  |   | .   /            \\   |   |\\    \\_______    .",
+            "      |            /   |   |    /    ______    \\  |   | \\           |",
+            "      |___________/    |___|   /____/      \\____\\ |___|  \\__________|    .",
+            "  .     ____    __  . _____   ____      .  __________   .  _________",
+            "       \\    \\  /  \\  /    /  /    \\       |          \\    /         |      .",
+            "        \\    \\/    \\/    /  /      \\      |    ___    |  /    ______|  .",
+            "         \\              /  /   /\\   \\ .   |   |___>   |  \\    \\",
+            "   .      \\            /  /   /__\\   \\    |         _/.   \\    \\            +",
+            "           \\    /\\    /  /            \\   |   |\\    \\______>    |   .",
+            "            \\  /  \\  /  /    ______    \\  |   | \\              /          .",
+            " .       .   \\/    \\/  /____/      \\____\\ |___|  \\____________/  LS",
+            "                               .                                        .",
+            "     .                           .         .               .                 ."
+        };
+
+        int maxBannerWidth = 0;
+        foreach (var b in banner)
+        {
+            if (b.Length > maxBannerWidth) maxBannerWidth = b.Length;
+        }
+        foreach (var line in banner)
+        {
+            string padded = line.PadRight(maxBannerWidth);
+            canvas.Add(SubtitlesUtils.GenerateStarLine(drawWidth, padded));
+        }
+        for (int i = 0; i < height; i++)
+        {
+            canvas.Add(SubtitlesUtils.GenerateStarLine(drawWidth, string.Empty));
+        }
+        int totalFrames = canvas.Count - height;
+        for (int frame = 0; frame <= totalFrames; frame++)
+        {
+            Console.SetCursorPosition(0, 0);
+            StringBuilder screenBuffer = new StringBuilder();
+            for (int lineIdx = 0; lineIdx < height; lineIdx++)
+            {
+                screenBuffer.Append(canvas[frame + lineIdx]);
+                if (lineIdx < height - 1)
+                {
+                    screenBuffer.AppendLine();
+                }
+            }
+            Console.Write("\x1b[93m" + screenBuffer.ToString() + "\x1b[0m");
+
+            Thread.Sleep(1000);
+
+            if (Console.KeyAvailable)
+            {
+                Console.ReadKey(true);
+                break;
+            }
+        }
+        Console.Clear();
+    }
+   
+}

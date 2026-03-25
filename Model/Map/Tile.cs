@@ -11,6 +11,7 @@ public class Tile
     public char Symbol { get; private set; }
     public bool IsWall { get; private set; }
     public List<MapEntity> MapEntities { get; private set; } = new List<MapEntity>();
+    public bool InChamber { get; private set; } = false;
     public Tile(bool isWall)
     {
         IsWall = isWall;
@@ -23,6 +24,15 @@ public class Tile
         {
             IsWall = false;
             UpdateSymbol() ;
+        }
+    }
+
+    public void Fill()
+    {
+        if (!IsWall)
+        {
+            IsWall= true;
+            UpdateSymbol();
         }
     }
     public void AddMapEntity(MapEntity entity)
@@ -65,5 +75,10 @@ public class Tile
     {
         char newSymbol = GetSymbol();
         Symbol = newSymbol;
+    }
+
+    public void SetAsChamber()
+    {
+        InChamber = true;
     }
 }

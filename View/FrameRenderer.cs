@@ -6,48 +6,115 @@ using System.Text;
 
 namespace MazeGame.View;
 
-public class FrameRenderer
+public class FrameRenderer(Player player, Map map, List<string> controlsList)
 {
-    const int sidePanelTextWidth = -26;
-    const int sidePanelWidth = 31;
-    const int middlePanelWidth = 40;
-
+    static readonly int middlePanelWidth = 41;
+    static readonly int sidePanelWidth = (int)((Console.WindowWidth - middlePanelWidth) * 0.4);
+    static readonly int leftPanelWidth = (int)((Console.WindowWidth - middlePanelWidth) * 0.25);
     public StringBuilder Frame { get; private set; } = new StringBuilder();
     public string? frameString;
+    private List<string> ControlsList = controlsList;
+    private Map map = map;
+    private Player player = player;
+    private const string banner = "|===[ＤＵＮＧＥＯＮＳ ＯＦ ＭＩＮＩ]===|";
+    private Tile currTile => map.Tiles[player.X, player.Y];
 
-    public static List<string> GetStatsList(Player player)
+    public static string GetTopSectionWithTitle(string title, int width)
+    {
+        if (title == null) title = string.Empty;
+
+        int minWidth = title.Length + 2;
+        if (width < minWidth)
+        {
+            width = minWidth;
+        }
+
+        int totalDashes = width - 3 - title.Length;
+        int leftDashes = totalDashes / 2;
+        int rightDashes = totalDashes - leftDashes;
+
+        return "|" + new string('-', leftDashes) + title + new string('-', rightDashes) + "| ";
+    }
+    public static string GetSectionContentLine(string content, int width)
+    {
+        if (content == null) content = string.Empty;
+
+        string prefix = "| ";
+        string suffix = "| ";
+
+        int minWidth = content.Length + prefix.Length + suffix.Length;
+        if (width < minWidth)
+        {
+            width = minWidth;
+        }
+
+        int spaceNeeded = width - prefix.Length - suffix.Length;
+
+        return prefix + content.PadRight(spaceNeeded) + suffix;
+    }
+    public static string GetSectionBottomLine(int width)
+    {
+        return '|' + new string('-',width-3) + "| ";
+    }
+    public List<string> GetStatsList()
     {
         List<string> stats = new List<string>()
         {
-             " |-----------STATS-----------| ",
-            $" | {$"❤️: {player.Health}", sidePanelTextWidth}| ",
-            $" | {$"⚔️: {player.Strength}", sidePanelTextWidth}| ",
-            $" | {$"🏃: {player.Agility}", sidePanelTextWidth}| ",
-            $" | {$"🧠: {player.Wisdom}", sidePanelTextWidth}| ",
-            $" | {$"🙂: {player.Happiness}", sidePanelTextWidth}| ",
-            $" | {$"😡: {player.Agressiveness}", sidePanelTextWidth}| ",
-            $" | {$"🎒: {player.InventoryCapacity}", sidePanelTextWidth}| ",
-            $" | {$"🪙: {player.Gold}", sidePanelTextWidth}| ",
-            $" | {$"💰: {player.Money}", sidePanelTextWidth}| ",
-             " |---------------------------| "
+            GetTopSectionWithTitle("STATS", leftPanelWidth),
+            GetSectionContentLine($"❤️: {player.Health}",leftPanelWidth),
+            GetSectionContentLine($"⚔️: {player.Strength}",leftPanelWidth),
+            GetSectionContentLine($"🏃: {player.Agility}",leftPanelWidth),
+            GetSectionContentLine($"🧠: {player.Wisdom}",leftPanelWidth),
+            GetSectionContentLine($"🙂: {player.Happiness}",leftPanelWidth),
+            GetSectionContentLine($"😡: {player.Agressiveness}",leftPanelWidth),
+            GetSectionContentLine($"🎒: {player.InventoryCapacity}",leftPanelWidth),
+            GetSectionContentLine($"🪙: {player.Gold}",leftPanelWidth),
+            GetSectionContentLine($"💰: {player.Money}",leftPanelWidth),
+            GetSectionBottomLine(leftPanelWidth)
         };
         return stats;
     }
-    public static List<string> GetInventoryList(Player player)
+
+    public List<string> FormatControlsList()
     {
-        List<string> inventory = new List<string>()
+        List<string> formatted = new List<string>();
+        foreach(string control in ControlsList)
         {
-            " |---------INVENTORY---------| "
-        };
+            switch(control)
+            {
+                case ControlsListBuilder.equipControl:
+                case ControlsListBuilder.dropControl:
+                    if (player.Inventory.Count > 0)
+                        formatted.Add(GetSectionContentLine(control, leftPanelWidth));
+                break;
+                case ControlsListBuilder.pickupControl:
+                    if(currTile.MapEntities.Count > 0)
+                        formatted.Add(GetSectionContentLine(control, leftPanelWidth));
+                break;
+                default:
+                    formatted.Add(GetSectionContentLine(control, leftPanelWidth));
+                break;
+            }
+        }
+        formatted.Add(GetSectionBottomLine(leftPanelWidth));
+        return formatted;
+    }
+
+    public List<string> GetInventoryList()
+    {
+        List<string> inventory = new List<string>();
+
+
+        inventory.Add(GetTopSectionWithTitle("INVENTORY",sidePanelWidth));
 
         for (int i = 0; i < player.InventoryCapacity; i++)
         {
             string itemName = i < player.Inventory.Count ? player.Inventory[i].Name : "Empty";
-            inventory.Add($" | {$"{i}: {itemName}",sidePanelTextWidth}| ");
+            inventory.Add(GetSectionContentLine($"{i}: {itemName}", sidePanelWidth));
         }
         return inventory;
     }
-    public static List<string> GetHandsList(Player player)
+    public List<string> GetHandsList()
     {
         StringBuilder lH = new StringBuilder();
         StringBuilder rH = new StringBuilder();
@@ -72,109 +139,102 @@ public class FrameRenderer
 
         List<string> hands = new List<string>()
         {
-             " |-----------HANDS-----------| ",
-            $" | {$"L Hand: {lH}", sidePanelTextWidth}| ",
-            $" | {$"R Hand: {rH}", sidePanelTextWidth}| "
+            GetTopSectionWithTitle("HANDS",sidePanelWidth),
+            GetSectionContentLine($"L Hand: {lH}",sidePanelWidth),
+            GetSectionContentLine($"R Hand: {rH}",sidePanelWidth),
         };
+
         return hands;
     }
-    public static List<string> GetEntitiesFromTile(Tile tile)
+    public List<string> GetEntitiesFromTile()
     {
         List<string> entities = new List<string>()
         {
-            " |--------ITEMS HERE---------| "
+            GetTopSectionWithTitle("ITEMS HERE", sidePanelWidth)
         };
 
-        if (tile.MapEntities.Count == 0)
+        if (currTile.MapEntities.Count == 0)
         {
-            entities.Add($" | {"Nothing on this tile",sidePanelTextWidth}| ");
+            entities.Add(GetSectionContentLine("nothing here",sidePanelWidth));
         }
         else
         {
-            foreach (var entity in tile.MapEntities)
+            foreach (var entity in currTile.MapEntities)
             {
-                entities.Add($" | {$"{entity}",sidePanelTextWidth}| ");
+                entities.Add(GetSectionContentLine($"{entity}",sidePanelWidth));
             }
         }
-        entities.Add(" |---------------------------| ");
+        entities.Add(GetSectionBottomLine(sidePanelWidth));
         return entities;
     }
-    public static List<string> GetControlsList()
-    {
-        List<string> controls = new List<string>()
-        {
-            "|--------------CONTROLS----------------|",
-            $"| {"ESC: Exit | WSAD: Move | E: Pick Up",-(middlePanelWidth-3)}|",
-            $"| {"0-9: Equip | alt+0-9: Drop",-(middlePanelWidth-3)}|",
-            "|--------------------------------------|"
-
-        };
-        return controls;
-    }
-    public static List <string> GetLoggerList()
+    public List <string> GetLoggerList()
     {
         List <string> log = new List<string>()
         {
-            "|----------------LOGGER----------------|"
+            GetTopSectionWithTitle("LOGGER",middlePanelWidth)
         };
         for (int i = 0; i < 3; i++)
         {
-            log.Add($"| {$"{Logger.SingletonLogger[i]}",-(middlePanelWidth-3)}|");
+            log.Add(GetSectionContentLine($"{Logger.SingletonLogger[i]}", middlePanelWidth));
         }
-        log.Add("|--------------------------------------|");
+        log.Add(GetSectionBottomLine(middlePanelWidth));
         return log;
     }
-    private static List<string> GetLeftColumn(Player player)
+    private List<string> GetLeftColumn()
     {
-        return GetStatsList(player);
+        List<string> left = GetStatsList();
+        left.AddRange(FormatControlsList());
+        return left;
     }
-    private static List<string> GetMiddleColumn(Map map, Player player)
+    private List<string> GetMiddleColumn()
     {
         List<string> mid = new List<string>();
         int W = map.Width;
 
-        mid.AddRange(GetControlsList());
 
         for (int y = 0; y < map.Height; y++)
         {
             StringBuilder mapRow = new StringBuilder();
             for (int x = 0; x < W; x++)
             {
-                if (x == player.X && y == player.Y) mapRow.Append("\x1b[34m"+'¶'+ "\x1b[0m");
+                if (x == player.X && y == player.Y)
+                    mapRow.Append("\x1b[31m"+'¶'+"\x1b[0m");
                 else mapRow.Append(map.Tiles[x, y].Symbol);
             }
-            mid.Add(mapRow.ToString().PadRight(middlePanelWidth));
+            mid.Add( mapRow.ToString().PadRight(middlePanelWidth + (y ==player.Y ? 9 : 0)));
         }
         mid.AddRange(GetLoggerList());
         return mid;
     }
-    private static List<string> GetRightColumn(Player player, Tile currTile)
+    private List<string> GetRightColumn()
     {
         List<string> right = new List<string>();
-        right.AddRange(GetHandsList(player));
-        right.AddRange(GetInventoryList(player));
-        right.AddRange(GetEntitiesFromTile(currTile));
+        right.AddRange(GetHandsList());
+        right.AddRange(GetInventoryList());
+        right.AddRange(GetEntitiesFromTile());
         return right;
     }
-    public void GetNewFrame(Map map, Player player)
+    public void GetNewFrame()
     {
         Frame.Clear();
         Tile currTile = map.Tiles[player.X, player.Y];
 
-        List<string> leftCol = GetLeftColumn(player);
-        List<string> midCol = GetMiddleColumn(map, player);
-        List<string> rightCol = GetRightColumn(player, currTile);
+        List<string> leftCol = GetLeftColumn();
+        List<string> midCol = GetMiddleColumn();
+        List<string> rightCol = GetRightColumn();
 
         int maxRows = Math.Max(leftCol.Count, Math.Max(midCol.Count, rightCol.Count));
-        int totalWidth = sidePanelWidth + middlePanelWidth + sidePanelWidth;
+        int totalWidth = sidePanelWidth + middlePanelWidth + leftPanelWidth;
 
         string emptySidePanelLine = new string(' ', sidePanelWidth);
-        string emptyMid = new string(' ', middlePanelWidth);
+        string emptyLeftPanelLine = new string(' ', leftPanelWidth);
+        string emptyMidPanelLine = new string(' ', middlePanelWidth);
 
+        Frame.AppendLine(emptyLeftPanelLine + banner + emptySidePanelLine);
         for (int i = 0; i < maxRows; i++)
         {
-            string left = i < leftCol.Count ? leftCol[i] : emptySidePanelLine;
-            string mid = i < midCol.Count ? midCol[i] : emptyMid;
+            string left = i < leftCol.Count ? leftCol[i] : emptyLeftPanelLine;
+            string mid = i < midCol.Count ? midCol[i] : emptyMidPanelLine;
             string right = i < rightCol.Count ? rightCol[i] : emptySidePanelLine;
 
             Frame.Append(left);
@@ -183,7 +243,7 @@ public class FrameRenderer
             Frame.AppendLine();
         }
 
-        int linesToClear = Console.WindowHeight - maxRows - 1;
+        int linesToClear = Console.WindowHeight - maxRows - 2;
         if (linesToClear > 0)
         {
             string emptyLine = new string(' ', totalWidth);
@@ -198,7 +258,7 @@ public class FrameRenderer
 
     public void RenderFrame()
     {
-        Console.SetCursorPosition(Console.WindowLeft, Console.WindowTop);
+        Console.SetCursorPosition(0, 0);
         Console.Write(frameString);
     }
 }

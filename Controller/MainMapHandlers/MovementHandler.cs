@@ -1,23 +1,22 @@
 ﻿using MazeGame.Model;
 using MazeGame.Model.Items;
 using MazeGame.Model.Map;
+using MazeGame.View;
 using System;
 
-namespace MazeGame.Controller;
+namespace MazeGame.Controller.MainMapHandlers;
 
-public class MovementHandler : InputHandler
+public class MovementHandler(Player player, Map map, FrameRenderer renderer) : InputHandler
 {
-    private readonly Player _player;
-    private readonly Map _map;
-    private readonly Action _onSuccessfulMove;
+    private readonly Player _player = player;
+    private readonly Map _map = map;
+    private readonly FrameRenderer _renderer = renderer;
 
-    public MovementHandler(Player player, Map map, Action onSuccessfulMove)
+    public void Refresh()
     {
-        _player = player;
-        _map = map;
-        _onSuccessfulMove = onSuccessfulMove;
+        _renderer.GetNewFrame();
+        _renderer.RenderFrame();
     }
-
     public override void Handle(ConsoleKeyInfo keyInfo)
     {
         int newX = _player.X;
@@ -52,7 +51,7 @@ public class MovementHandler : InputHandler
             {
                 _player.X = newX;
                 _player.Y = newY;
-                _onSuccessfulMove?.Invoke();
+                Refresh();
             }
         }
         else

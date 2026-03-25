@@ -10,76 +10,122 @@ public class ConcreteMapBuilder : IMapBuilder
     private List<Chamber> _chambers = new List<Chamber>();
     private Random _random = new Random();
     private const int MAX_TRIES = 1000;
+    bool    _startedEmpty = true;
     public void BuildEmptyDungeon(int width, int height)
     {
         _map = new Map(width, height, false);
+        for (int x = 0; x < width; x++)
+        {
+            _map[x,0].Fill();
+            _map[x,height-1].Fill();
+        }
+        for (int y = 0; y < height; y++) 
+        {
+            _map[0, y].Fill();
+            _map[width-1, y].Fill();
+        }
         _chambers.Add(new Chamber(1,1,1,1));
+        _map[1, 1].SetAsChamber();
     }
     public void BuildFilledDungeon(int width, int height)
     {
         _map = new Map(width, height, true);
         _chambers.Add(new Chamber(1, 1, 1, 1));
+        _startedEmpty = false;
     }
     public void BuildCorridors(int turns)
     {
-        List<Chamber> pointsToConnect = new List<Chamber>();
-
-        if (_chambers.Count > 0)
+        if (!_startedEmpty)
         {
-            pointsToConnect.AddRange(_chambers);
-        }
+            List<Chamber> pointsToConnect = new List<Chamber>();
 
-        for (int i = 0; i < turns; i++)
-        {
-            int fPx = _random.Next(1, _map.Width - 1);
-            int fPy = _random.Next(1, _map.Height - 1);
-            pointsToConnect.Add(new Chamber(fPx, fPy, 1, 1));
-        }
-
-        if (pointsToConnect.Count < 2) return;
-
-        List<Chamber> unconnected = new List<Chamber>(pointsToConnect);
-        List<Chamber> connected = new List<Chamber>();
-
-        Chamber? current = unconnected[0];
-        unconnected.Remove(current);
-        connected.Add(current);
-
-        while (unconnected.Count > 0)
-        {
-            Chamber? nearest = null;
-            double minDistance = double.MaxValue;
-
-            foreach (var candidate in unconnected)
+            if (_chambers.Count > 0)
             {
-                double dx = current.CX - candidate.CX;
-                double dy = current.CY - candidate.CY;
-                double distanceSquared = (dx * dx) + (dy * dy);
-
-                if (distanceSquared < minDistance)
-                {
-                    minDistance = distanceSquared;
-                    nearest = candidate;
-                }
+                pointsToConnect.AddRange(_chambers);
             }
 
-            current = nearest;
+            for (int i = 0; i < turns; i++)
+            {
+                int fPx = _random.Next(2, _map.Width - 2);
+                int fPy = _random.Next(2, _map.Height - 2);
+                pointsToConnect.Add(new Chamber(fPx, fPy, 1, 1));
+            }
+
+            if (pointsToConnect.Count < 2) return;
+
+            List<Chamber> unconnected = new List<Chamber>(pointsToConnect);
+            List<Chamber> connected = new List<Chamber>();
+
+            Chamber? current = unconnected[0];
             unconnected.Remove(current);
             connected.Add(current);
-        }
 
-        for (int i = 0; i < connected.Count - 1; i++)
-        {
-            int r = _random.Next(0, 2);
-            if (r == 0)
+            while (unconnected.Count > 0)
             {
-                BuildHorizontalTunnel(connected[i].CX, connected[i].CY, connected[i + 1].CX);
-                BuildVerticalTunnel(connected[i + 1].CX, connected[i].CY, connected[i + 1].CY);
+                Chamber? nearest = null;
+                double minDistance = double.MaxValue;
+
+                foreach (var candidate in unconnected)
+                {
+                    double dx = current.CX - candidate.CX;
+                    double dy = current.CY - candidate.CY;
+                    double distanceSquared = (dx * dx) + (dy * dy);
+
+                    if (distanceSquared < minDistance)
+                    {
+                        minDistance = distanceSquared;
+                        nearest = candidate;
+                    }
+                }
+
+                current = nearest;
+                unconnected.Remove(current);
+                connected.Add(current);
             }
-            else
+
+            for (int i = 0; i < connected.Count - 1; i++)
             {
-                BuildVerticalTunnel(connected[i].CX, connected[i].CY, connected[i + 1].CY);
-                BuildHorizontalTunnel(connected[i].CX, connected[i + 1].CY, connected[i + 1].CX);
+                int r = _random.Next(0, 2);
+                if (r == 0)
+                {
+                    BuildHorizontalTunnel(connected[i].CX, connected[i].CY, connected[i + 1].CX);
+                    BuildVerticalTunnel(connected[i + 1].CX, connected[i].CY, connected[i + 1].CY);
+                }
+                else
+                {
+                    BuildVerticalTunnel(connected[i].CX, connected[i].CY, connected[i + 1].CY);
+                    BuildHorizontalTunnel(connected[i].CX, connected[i + 1].CY, connected[i + 1].CX);
+                }
+            }
+        }
+        else
+        {
+            foreach (var chamber in _chambers)
+            {
+                int xTop = _random.Next(chamber.X, chamber.X + chamber.W);
+                if (chamber.Y - 2 > 0)
+                {
+                    _map[xTop, chamber.Y - 1].Dig();
+                    _map[xTop, chamber.Y - 2].Dig();
+                }
+                int xBot = _random.Next(chamber.X, chamber.X + chamber.W);
+                if (chamber.Y + chamber.H + 1 < _map.Height - 1)
+                {
+                    _map[xBot, chamber.Y + chamber.H].Dig();
+                    _map[xBot, chamber.Y + chamber.H + 1].Dig();
+                }
+                int yEast = _random.Next(chamber.Y, chamber.Y + chamber.H);
+                if (chamber.X + chamber.W + 1 < _map.Width - 1)
+                {
+                    _map[chamber.X + chamber.W, yEast].Dig();
+                    _map[chamber.X + chamber.W + 1, yEast].Dig();
+                }
+                int yWest = _random.Next(chamber.Y, chamber.Y + chamber.H);
+                if (chamber.X - 2 > 0)
+                {
+                    _map[chamber.X - 1, yWest].Dig();
+                    _map[chamber.X-2,yWest].Dig();
+                }
             }
         }
     }
@@ -98,9 +144,9 @@ public class ConcreteMapBuilder : IMapBuilder
             bool foundfreespace = true;
             for (int x = rX-1; x < rX + rW + 1; x++)
             {
-                for (int y = rY - 1; y < rY + rH + 1; y++)
+                for (int y = rY-1; y < rY + rH + 1 ; y++)
                 {
-                    if(!_map.Tiles[x, y].IsWall)
+                    if( (_startedEmpty ? (_map[x,y].IsWall || _map[x,y].InChamber) : !_map[x, y].IsWall))
                     {
                         foundfreespace = false; break;
                     }
@@ -109,11 +155,35 @@ public class ConcreteMapBuilder : IMapBuilder
             if (foundfreespace)
             {
                 _chambers.Add(new Chamber(rX, rY, rW, rH));
-                for (int x = rX; x < rX + rW; x++)
+                if (!_startedEmpty)
                 {
-                    for (int y = rY; y < rY + rH; y++)
+                    for (int x = rX; x < rX + rW; x++)
                     {
-                        _map.Tiles[x, y].Dig();
+                        for (int y = rY; y < rY + rH; y++)
+                        {
+                            _map[x, y].Dig();
+                            _map[x, y].SetAsChamber();
+                        }
+                    }
+                }
+                else
+                {
+                    for (int x = rX-1; x < rX + rW + 1; x++)
+                    {
+                        _map[x,rY-1].Fill();
+                        _map[x,rY+rH+1].Fill();
+                    }
+                    for (int y = rY-1; y <= rY + rH + 1; y++)
+                    {
+                        _map[rX - 1, y].Fill();
+                        _map[rX + rW + 1, y].Fill();
+                    }
+                    for (int x = rX; x < rX + rW; x++)
+                    {
+                        for (int y = rY; y < rY + rH; y++)
+                        {
+                            _map[x, y].SetAsChamber();
+                        }
                     }
                 }
             }
@@ -129,11 +199,35 @@ public class ConcreteMapBuilder : IMapBuilder
         int cX = (_map.Width  - width) / 2;
         int cY = (_map.Height - height) / 2;
         _chambers.Add(new Chamber(cX, cY, width, height));
-        for (int x = cX; x < cX + width; x++)
+        if (!_startedEmpty)
         {
-            for (int y = cY; y < cY + height; y++)
+            for (int x = cX; x < cX + width; x++)
             {
-                _map.Tiles[x, y].Dig();
+                for (int y = cY; y < cY + height; y++)
+                {
+                    _map.Tiles[x, y].Dig();
+                }
+            }
+        }
+        else
+        {
+            for (int x = cX - 1; x < cX + width + 1; x++)
+            {
+                _map[x, cY - 1].Fill();
+                _map[x, cY + height + 1].Fill();
+            }
+            for (int y = cY - 1; y <= cY + height + 1; y++)
+            {
+                _map[cX - 1, y].Fill();
+                _map[cX + width + 1, y].Fill();
+            }
+            for (int x = cX; x < cX + width; x++)
+            {
+                for (int y = cY; y < cY + height; y++)
+                {
+                    _map[x,y].Dig();
+                    _map[x, y].SetAsChamber();
+                }
             }
         }
 
@@ -171,11 +265,17 @@ public class ConcreteMapBuilder : IMapBuilder
     {
         int min = Math.Min(startY, endY);
         int max = Math.Max(startY, endY);
+
         for (int y = min; y <= max; y++)
         {
-            _map.Tiles[startX, y].Dig();
+            if (!_startedEmpty)
+            {
+                _map[startX, y].Dig();
+                _map[startX, y].SetAsChamber();
+            }
         }
     }
+
     private void BuildHorizontalTunnel(int startX, int startY, int endX)
     {
         int min = Math.Min(startX, endX);
@@ -183,7 +283,11 @@ public class ConcreteMapBuilder : IMapBuilder
 
         for (int x = min; x <= max; x++)
         {
-            _map.Tiles[x, startY].Dig();
+            if (!_startedEmpty)
+            {
+                _map[x, startY].Dig();
+                _map[x, startY].SetAsChamber();
+            }
         }
     }
 

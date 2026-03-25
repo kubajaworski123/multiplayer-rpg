@@ -31,6 +31,8 @@ public class TwoHandedWeapon(string name, char symbol, int damage): Weapon(name,
     };
     public override void Equip(Player player, Map.Map map)
     {
+        player.hasWeapons = true;
+
         if (player.LeftHand != null && player.LeftHand == player.RightHand)
         {
             if (player.Inventory.Count < player.InventoryCapacity)

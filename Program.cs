@@ -13,22 +13,33 @@ class Program
     {
         Console.CursorVisible = false;
         Console.OutputEncoding = System.Text.Encoding.UTF8;
-        //var map = new Map(40, 20);
-        var CMB = new ConcreteMapBuilder();
-        CMB.BuildFilledDungeon(40, 20);
-        CMB.BuildCentralHall(10,5);
-        CMB.BuildChambers(150000);
-        CMB.BuildCorridors(0);
-        CMB.BuildItems(5);
-        CMB.BuildWeapons(20);
 
-        var map = CMB.GetMap();
-        Player player = new Player();
-        var mainScreenRenderer = new MainScreenRenderer();
-        mainScreenRenderer.CalculateMainScreen();
+        var mainScreenRenderer = new WelcomeScreen();
+        var subRenderer = new SubtitlesRenderer();
+
+        mainScreenRenderer.CalculateWelcomeScreen();
         mainScreenRenderer.RenderMainScreen();
-        var renderer = new FrameRenderer();
-        var controller = new MainController(player, map, renderer);
+
+
+        var mapMenu = new MapMenu();
+        int chosenMap = mapMenu.DisplayMenuFrame();
+
+        (Map map, List<string> controls, List<string> intro, List<string> usersManual) = BuilderDirector.ProcessMapChoice(chosenMap);
+        Player player = new Player();
+        var renderer = new FrameRenderer(player, map, controls);
+        var umRenderer = new UsersManualRenderer(usersManual);
+        umRenderer.CalculateUsersManual();
+        var COR = new CORMapBuilder(player, map, renderer, umRenderer);
+        BuilderDirector.MenuOptionsMap[chosenMap](COR);
+        var cor = COR.GetCOR();
+
+        var ct = new CancellationTokenSource();
+        Task.Run(() => SubtitlesUtils.PlayImperialMarchLooped(ct.Token));
+        subRenderer.DisplaySubs(intro);
+        ct.Cancel();
+
+        var controller = new MainController(player, map, renderer,cor, umRenderer);
         controller.Run();
+        
     }
 }

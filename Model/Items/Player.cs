@@ -19,6 +19,7 @@ public class Player
     public List<Item> Inventory { get; private set; } = new List<Item>();
     public Weapon? LeftHand { get; set; }
     public Weapon? RightHand { get; set; }
+    public bool hasWeapons;
     public int X { get; set; } = 1;
     public int Y { get; set; } = 1;
 

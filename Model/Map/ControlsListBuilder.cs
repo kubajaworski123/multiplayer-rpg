@@ -7,11 +7,12 @@ namespace MazeGame.Model.Map;
 
 public class ControlsListBuilder: IMapBuilder
 {
-    const string moveControl = "\x1b[33mWSAD: MOVE\x1b[0m";
-    const string pickupControl = "\x1b[33mE: PICK UP\x1b[0m";
-    const string dropControl = "\x1b[33mALT+0-9: DROP\x1b[0m";
-    const string equipControl = "\x1b[33m0-9: EQUIP\x1b[0m";
-    const string exitControl = "\x1b[33mESC: EXIT\x1b[0m";
+    public const string moveControl = "WSAD: MOVE";
+    public const string pickupControl = "E: PICK UP";
+    public const string dropControl = "ALT+0-9: DROP";
+    public const string equipControl = "0-9: EQUIP";
+    public const string exitControl = "ESC: EXIT";
+    public const string helpControl = "H: HELP";
     public List<string> Controls {get; private set;} = new List<string>();
 
     public void BuildFilledDungeon(int width, int height) 
@@ -19,6 +20,10 @@ public class ControlsListBuilder: IMapBuilder
         if (!Controls.Contains(exitControl))
         {
             Controls.Add(exitControl);
+        }
+        if (!Controls.Contains(helpControl))
+        {
+            Controls.Add(helpControl);
         }
     }
     public  void BuildEmptyDungeon(int width, int height)
@@ -30,6 +35,10 @@ public class ControlsListBuilder: IMapBuilder
         if (!Controls.Contains(exitControl))
         {
             Controls.Add(exitControl);
+        }
+        if (!Controls.Contains(helpControl))
+        {
+            Controls.Add(helpControl);
         }
     }
     public void BuildCorridors(int turns) { 
@@ -78,6 +87,8 @@ public class ControlsListBuilder: IMapBuilder
             Controls.Add(equipControl);
         }
     }
-
-
+    public List<string> GetControls()
+    {
+        return Controls;
+    }
 }

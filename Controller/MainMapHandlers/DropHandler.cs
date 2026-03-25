@@ -1,45 +1,58 @@
-﻿using System;
+﻿using MazeGame.Model.Items;
+using MazeGame.Model.Map;
+using MazeGame.View;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using MazeGame.Model.Items;
-namespace MazeGame.Controller;
-public class DropHandler(Player player, Action<int> action) : InputHandler
+namespace MazeGame.Controller.MainMapHandlers;
+public class DropHandler(Player player, Map map, FrameRenderer renderer) : InputHandler
 {
     private readonly Player _player = player;
-    private readonly Action<int> _onDrop = action;
+    private readonly FrameRenderer _renderer = renderer;
+    private readonly Map _map = map;
+    public void Drop(int x)
+    {
+        if (_player.Inventory.Count > x)
+        {
+            Item item = _player.Inventory[x];
+            item.Drop(_player, _map);
+            _renderer.GetNewFrame();
+            _renderer.RenderFrame();
+        }
+    }
     public override void Handle(ConsoleKeyInfo keyInfo)
     {
         switch ((keyInfo.Key, keyInfo.Modifiers ))
         {
             case (ConsoleKey.D1,ConsoleModifiers.Alt) :
-                _onDrop?.Invoke(1);
+                Drop(1);
                 break;
             case (ConsoleKey.D2, ConsoleModifiers.Alt):
-                _onDrop?.Invoke(2);
+                Drop(2);
                 break;
             case (ConsoleKey.D3,ConsoleModifiers.Alt):
-                _onDrop?.Invoke(3);
+                Drop(3);
                 break;
             case (ConsoleKey.D4,ConsoleModifiers.Alt):
-                _onDrop?.Invoke(4);
+                Drop(4);
                 break;
             case (ConsoleKey.D5,ConsoleModifiers.Alt):
-                _onDrop?.Invoke(5);
+                Drop(5);
                 break;
             case (ConsoleKey.D6,ConsoleModifiers.Alt):
-                _onDrop?.Invoke(6);
+                Drop(6);
                 break;
             case (ConsoleKey.D7,ConsoleModifiers.Alt):
-                _onDrop?.Invoke(7);
+                Drop(7);
                 break;
             case (ConsoleKey.D8,ConsoleModifiers.Alt):
-                _onDrop?.Invoke(8);
+                Drop(8);
                 break;
             case (ConsoleKey.D9,ConsoleModifiers.Alt):
-                _onDrop?.Invoke(9);
+                Drop(9);
                 break;
             case (ConsoleKey.D0,ConsoleModifiers.Alt):
-                _onDrop?.Invoke(0);
+                Drop(0);
                  break;
             default:
                 base.Handle(keyInfo);

@@ -5,14 +5,14 @@ using System.Text;
 
 namespace MazeGame.View;
 
-public class MainScreenRenderer
+public class WelcomeScreen
 {
     private StringBuilder MainScreen = new StringBuilder();
     string mainScreenString = string.Empty;
 
     private List<string> banner = new List<string>()
     {
-        "\x1b[31m" +
+        "\x1b[93m" +
         "▄▄▄      ▄▄▄    ▄▄▄    ▄▄▄ ▄▄▄▄▄   ▄▄▄▄▄▄   ▄▄▄  ▄▄▄ ▄▄▄    ▄▄▄  ▄▄▄▄▄▄▄   ▄▄▄▄▄▄▄   ▄▄▄▄▄   ▄▄▄    ▄▄▄ ",
         "████▄  ▄████ ▀▀ ████▄  ███  ███    ███▀▀██▄ ███  ███ ████▄  ███ ███▀▀▀▀▀  ███▀▀▀▀▀ ▄███████▄ ████▄  ███ ",
         "███▀████▀███ ██ ███▀██▄███  ███    ███  ███ ███  ███ ███▀██▄███ ███       ███▄▄    ███   ███ ███▀██▄███ ",
@@ -24,7 +24,7 @@ public class MainScreenRenderer
         "                             FOR BETTER EXPERIENCE MAXIMIZE THE WINDOW                                  "
     };
 
-    public void CalculateMainScreen()
+    public void CalculateWelcomeScreen()
     {
         Console.Clear();
         int bannerLength = banner[1].Length;
@@ -41,7 +41,7 @@ public class MainScreenRenderer
             MainScreen.Append(' ', emptySpacesBefore);
             MainScreen.AppendLine(line);
         }
-        for (int i = 0; i < emptyLinesBefore; i++)
+        for (int i = 0; i < emptyLinesBefore - 1; i++)
         {
             MainScreen.AppendLine();
         }

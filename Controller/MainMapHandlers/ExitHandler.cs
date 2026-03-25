@@ -1,13 +1,12 @@
 ﻿using System;
-namespace MazeGame.Controller;
-public class SystemActionHandler(Action onExit) : InputHandler
+namespace MazeGame.Controller.MainMapHandlers;
+public class ExitHandler() : InputHandler
 {
-    private readonly Action _onExit = onExit;
     public override void Handle(ConsoleKeyInfo keyInfo)
     {
         if (keyInfo.Key == ConsoleKey.Escape)
         {
-            _onExit?.Invoke();
+            MainController.StopRunning();
         }
         else
         {

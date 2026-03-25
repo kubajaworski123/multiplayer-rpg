@@ -1,4 +1,5 @@
-﻿using MazeGame.Controller;
+﻿using MazeGame.Controller.MainMapHandlers;
+using MazeGame.Controller.UsersManualHandlers;
 using MazeGame.Model;
 using MazeGame.Model.Items;
 using MazeGame.Model.Map;
@@ -12,88 +13,45 @@ public class MainController
     private readonly Player _player;
     private readonly Map _map;
     private readonly FrameRenderer _renderer;
+    private readonly UsersManualRenderer _usersManualRenderer;
 
-    private InputHandler? _inputChain;
-    private bool _isRunning;
+    private static InputHandler? _UsedInputChain;
+    private static InputHandler? _MapInputChain;
+    private static InputHandler? _UsersManualInputChain;
 
-    public MainController(Player player, Map map, FrameRenderer renderer)
+    private static bool _isRunning;
+
+    public MainController(Player player, Map map, FrameRenderer renderer, InputHandler cor, UsersManualRenderer umRenderer)
     {
         _player = player;
         _map = map;
         _renderer = renderer;
         _isRunning = true;
-        InitializeInputChain();
+        _MapInputChain = cor;
+        _UsedInputChain = _MapInputChain;
+        _usersManualRenderer = umRenderer;
+        var exitUM = new ExitUsersManualHandler(_renderer);
+        var scrollUp = new ScrollUpHandler(_usersManualRenderer);
+        var scrollDown = new ScrollDownHandler(_usersManualRenderer);
+        var exit = new ExitHandler();
+        _UsersManualInputChain = exitUM;
+        exitUM.SetNextHandler(exit); exit.SetNextHandler(scrollUp); scrollUp.SetNextHandler(scrollDown);
     }
-    private void InitializeInputChain()
+    public static void StopRunning()
     {
-        Action refreshView = () =>
-        {
-            _renderer.GetNewFrame(_map, _player);
-            _renderer.RenderFrame();
-        };
-
-        Action StopRunning = () =>
-        {
-            _isRunning = false;
-        };
-
-        Action Pickup = () =>
-        {
-            MapEntity item = _map.Tiles[_player.X, _player.Y].MapEntities.First();
-            item.PickUp(_player);
-            _map.Tiles[_player.X, _player.Y].RemoveMapEntity(item);
-            _renderer.GetNewFrame(_map, _player);
-            _renderer.RenderFrame();
-        };
-
-        Action<int> QuickEquip = (x) =>
-        {
-            if (_player.Inventory.Count > x)
-            {
-                Item item = _player.Inventory[x];
-                item.Equip(_player, _map);
-                _renderer.GetNewFrame(_map, _player);
-                _renderer.RenderFrame();
-            }
-        };
-
-        Action <int> QuickDrop = (x) =>
-        {
-            if (_player.Inventory.Count > x)
-            {
-                Item item = _player.Inventory[x];
-                item.Drop(_player, _map);
-                _renderer.GetNewFrame(_map, _player);
-                _renderer.RenderFrame();
-            }
-        };
-
-        Action<ConsoleKeyInfo> SignalizeUnknownInput = (key) =>
-        {
-            Logger.SingletonLogger.Add($"Unknown key: {key.Key}");
-            _renderer.GetNewFrame(_map, _player);
-            _renderer.RenderFrame();
-        };
-
-        var systemHandler = new SystemActionHandler(StopRunning);
-        var movementHandler = new MovementHandler(_player, _map, refreshView);
-        var pickupHandler = new PickupHandler(_player, _map, Pickup);
-        var equipHandler = new EquipHandler(_player, QuickEquip);
-        var dropHandler = new DropHandler(_player, QuickDrop);
-        var unknownInputHandler = new UnknownInputHandler(SignalizeUnknownInput);
-
-        systemHandler.SetNextHandler(movementHandler);
-        movementHandler.SetNextHandler(pickupHandler);
-        pickupHandler.SetNextHandler(equipHandler);
-        equipHandler.SetNextHandler(dropHandler);
-        dropHandler.SetNextHandler(unknownInputHandler);
-
-        _inputChain = systemHandler;
+        _isRunning = false;
     }
-
+    public static void ChangeToMapHandler()
+    {
+        _UsedInputChain = _MapInputChain;
+    }
+    public static void ChangeToUmRenderer()
+    {
+        _UsedInputChain = _UsersManualInputChain;
+    }
     public void Run()
     {
-        _renderer.GetNewFrame(_map, _player);
+        _renderer.GetNewFrame();
         _renderer.RenderFrame();
 
         while (_isRunning)
@@ -101,7 +59,7 @@ public class MainController
             if (Console.KeyAvailable)
             {
                 ConsoleKeyInfo keyInfo = Console.ReadKey(true);
-                _inputChain?.Handle(keyInfo);
+                _UsedInputChain?.Handle(keyInfo);
             }
         }
         Console.Clear();

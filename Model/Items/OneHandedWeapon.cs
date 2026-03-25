@@ -32,6 +32,8 @@ public class OneHandedWeapon(string name, char symbol, int damage) : Weapon(name
     };
     public override void Equip(Player player, Map.Map map)
     {
+        player.hasWeapons = true;
+
         if (player.LeftHand == null)
         {
             player.LeftHand = this;
