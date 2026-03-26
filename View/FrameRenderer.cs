@@ -61,15 +61,15 @@ public class FrameRenderer(Player player, Map map, List<string> controlsList)
         List<string> stats = new List<string>()
         {
             GetTopSectionWithTitle("STATS", leftPanelWidth),
-            GetSectionContentLine($"❤️: {player.Health}",leftPanelWidth),
-            GetSectionContentLine($"⚔️: {player.Strength}",leftPanelWidth),
-            GetSectionContentLine($"🏃: {player.Agility}",leftPanelWidth),
-            GetSectionContentLine($"🧠: {player.Wisdom}",leftPanelWidth),
-            GetSectionContentLine($"🙂: {player.Happiness}",leftPanelWidth),
-            GetSectionContentLine($"😡: {player.Agressiveness}",leftPanelWidth),
-            GetSectionContentLine($"🎒: {player.InventoryCapacity}",leftPanelWidth),
-            GetSectionContentLine($"🪙: {player.Gold}",leftPanelWidth),
-            GetSectionContentLine($"💰: {player.Money}",leftPanelWidth),
+            GetSectionContentLine($" HP: {player.Health}",leftPanelWidth),
+            GetSectionContentLine($"STR: {player.Strength}",leftPanelWidth),
+            GetSectionContentLine($"AGI: {player.Agility}",leftPanelWidth),
+            GetSectionContentLine($"WIS: {player.Wisdom}",leftPanelWidth),
+            GetSectionContentLine($"HAP: {player.Happiness}",leftPanelWidth),
+            GetSectionContentLine($"AGR: {player.Agressiveness}",leftPanelWidth),
+            GetSectionContentLine($"INV: {player.InventoryCapacity}",leftPanelWidth),
+            GetSectionContentLine($"GLD: {player.Gold}",leftPanelWidth),
+            GetSectionContentLine($"MON: {player.Money}",leftPanelWidth),
             GetSectionBottomLine(leftPanelWidth)
         };
         return stats;
