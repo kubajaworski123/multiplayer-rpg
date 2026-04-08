@@ -7,10 +7,10 @@ using System.Text;
 
 namespace MazeGame.Model.Combat
 {
-    public class CombatSession(Player leftActor, Mob rightActor )
+    public class CombatSession(ICombat leftActor, ICombat rightActor )
     {
-        public Player LeftActor { get; private set; } = leftActor;
-        public Mob RightActor  { get; private set; }  = rightActor;
+        public ICombat LeftActor { get; private set; } = leftActor;
+        public ICombat RightActor  { get; private set; }  = rightActor;
         public bool Turn { get; private set; } = true;
         public bool ActiveCombat { get; private set; } = true;
         public int HighlightedAttackOtption { get; private set; } = 0;
@@ -42,7 +42,7 @@ namespace MazeGame.Model.Combat
             RightActor.Attack(LeftActor);
             if (LeftActor.Health <= 0)
             {
-                ActiveCombat = false;
+                ActiveCombat = false;   
             }
             else
             {

@@ -8,10 +8,10 @@ using System.Text;
 
 namespace MazeGame.View.Renderers
 {
-    public class CombatRenderer(Player leftActor, Character rightActor, CombatSession session) : IRenderer
+    public class CombatRenderer(ICombat leftActor, ICombat rightActor, CombatSession session) : IRenderer
     {
-        private Player _leftActor = leftActor;
-        private Character _rightActor = rightActor;
+        private ICombat _leftActor = leftActor;
+        private ICombat _rightActor = rightActor;
         //private int HighlightedAttack = 0;
         StringBuilder sb = new StringBuilder();
         CombatSession _session = session;

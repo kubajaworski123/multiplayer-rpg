@@ -1,4 +1,5 @@
 ﻿using MazeGame.Model.Characters;
+using MazeGame.Model.Combat;
 using MazeGame.Model.MapEntities;
 using System;
 using System.Collections.Generic;
@@ -12,26 +13,26 @@ public class Map
     public int Width { get; private set; }
     public int Height { get; private set; }
     public Tile[,] Tiles { get; private set; }
-    public List<Mob> Mobs { get; private set; } = new List<Mob>();
-    public void AddMob(Mob mob)
+    public List<ICombat> Combatants { get; private set; } = new List<ICombat>();
+    public void AddCombatant(ICombat combatant)
     {
-        Mobs.Add(mob);
+        Combatants.Add(combatant);
     }
-    public void RemoveMob(Mob mob)
+    public void RemoveCombatant(ICombat combatant)
     {
-        Mobs.Remove(mob);
+        Combatants.Remove(combatant);
     }
-    public List<Mob> GetMobsFromTile(int x, int y)
+    public List<ICombat> GetCombatantsFromTile(int x, int y)
     {
-        List<Mob> mobsOnTile = new List<Mob>();
-        foreach (Mob mob in Mobs)
+        List<ICombat> combatantsOnTile = new List<ICombat>();
+        foreach (ICombat combatant in Combatants)
         {
-            if (mob.X == x && mob.Y == y)
+            if (combatant.X == x && combatant.Y == y)
             {
-                mobsOnTile.Add(mob);
+                combatantsOnTile.Add(combatant);
             }
         }
-        return mobsOnTile;
+        return combatantsOnTile;
     }
     public void AddEntityToTile(MapEntity entity, int x, int y)
     {

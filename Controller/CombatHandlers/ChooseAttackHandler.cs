@@ -41,7 +41,7 @@ namespace MazeGame.Controller.CombatHandlers
                         _session.RightActor.SetBanner(CharacterBanners.DeadBanner);
                         _renderer.Prepare();
                         _renderer.Render();
-                        _map.RemoveMob(_session.RightActor);
+                        _map.RemoveCombatant(_session.RightActor);
                         Console.ReadKey();
                     }
                     else if (_session.LeftActor.Health <= 0)

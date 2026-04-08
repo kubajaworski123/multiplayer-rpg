@@ -265,7 +265,7 @@ public class ConcreteMapBuilder : IMapBuilder
             (int x, int y) = nonWall[rTile];
             Mob mob = MobsList.GetRandomMob();
             mob.Move(x, y);
-            _map.Mobs.Add(mob);
+            _map.AddCombatant(mob);
         }
     }
     public Map GetMap()

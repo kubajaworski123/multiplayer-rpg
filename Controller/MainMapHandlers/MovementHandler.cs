@@ -42,12 +42,12 @@ public class MovementHandler(Player player, Map map, FrameRenderer renderer, Gam
                 _player.X = newX;
                 _player.Y = newY;
                 Refresh();
-                var mobs = _map.GetMobsFromTile(newX, newY);
-                if (mobs.Count > 0)
+                var combatants = _map.GetCombatantsFromTile(newX, newY);
+                if (combatants.Count > 0)
                 {
-                    var mob = mobs[0];
-                    var combatSession = new CombatSession(_player, mob);
-                    var combatRenderer = new CombatRenderer(_player, mob, combatSession);
+                    var enemy = combatants[0];
+                    var combatSession = new CombatSession(_player, enemy);
+                    var combatRenderer = new CombatRenderer(_player, enemy, combatSession);
 
                     var switchHandler = new SwitchAttackHandler(combatRenderer, combatSession);
                     var choseHandler = new ChooseAttackHandler(_player, combatRenderer, combatSession,_stateManager,_map);

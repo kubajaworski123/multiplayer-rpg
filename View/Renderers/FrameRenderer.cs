@@ -212,11 +212,11 @@ public class FrameRenderer(Player player, Map map, List<string> controlsList) : 
             StringBuilder mapRow = new StringBuilder("\x1b[0m");
             for (int x = 0; x < W; x++)
             {
-                var mobsHere = map.GetMobsFromTile(x, y);
+                var combatantsHere = map.GetCombatantsFromTile(x, y);
                 if (x == player.X && y == player.Y)
                     mapRow.Append('¶');
-                else if (mobsHere.Count > 0)
-                    mapRow.Append(mobsHere.First().ColorCode + mobsHere.First().Symbol + "\x1b[0m");
+                else if (combatantsHere.Count > 0)
+                    mapRow.Append(combatantsHere.First().ColorCode + combatantsHere.First().Symbol + ViewUtils.ResetCode);
                 else mapRow.Append(map[x, y].Symbol);
             }
             mapRow.Append(" \x1b[93m");
