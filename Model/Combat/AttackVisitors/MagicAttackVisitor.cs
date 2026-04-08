@@ -8,9 +8,9 @@ namespace MazeGame.Model.Combat
 {
     public class MagicAttackVisitor: IAttackVisitor
     {
-
         private Player _player;
 
+        public override string Name => "MAGICAL ATTACK";
         public MagicAttackVisitor(Player player)
         {
             _player = player;

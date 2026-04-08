@@ -46,7 +46,13 @@ public class MovementHandler(Player player, Map map, FrameRenderer renderer, Gam
                 if (combatants.Count > 0)
                 {
                     var enemy = combatants[0];
-                    var combatSession = new CombatSession(_player, enemy);
+                    var attacks = new List<IAttackVisitor>()
+                    {
+                        new NormalAttackVisitor(_player),
+                        new StealthAttackVisitor(_player),
+                        new MagicAttackVisitor(_player)
+                    };
+                    var combatSession = new CombatSession(_player, enemy, attacks);
                     var combatRenderer = new CombatRenderer(_player, enemy, combatSession);
 
                     var switchHandler = new SwitchAttackHandler(combatRenderer, combatSession);

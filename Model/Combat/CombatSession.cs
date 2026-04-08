@@ -7,14 +7,15 @@ using System.Text;
 
 namespace MazeGame.Model.Combat
 {
-    public class CombatSession(ICombat leftActor, ICombat rightActor )
+    public class CombatSession(ICombat leftActor, ICombat rightActor, List<IAttackVisitor> attacks)
     {
         public ICombat LeftActor { get; private set; } = leftActor;
         public ICombat RightActor  { get; private set; }  = rightActor;
         public bool Turn { get; private set; } = true;
         public bool ActiveCombat { get; private set; } = true;
         public int HighlightedAttackOtption { get; private set; } = 0;
-        public int PossibleAttackOtptions { get; private set; } = 3;
+        public List<IAttackVisitor> PossibleAttacks { get; private set; } = attacks;
+        public int PossibleAttackOtptions => PossibleAttacks.Count ;
 
         public void PlayersTurn()
         {

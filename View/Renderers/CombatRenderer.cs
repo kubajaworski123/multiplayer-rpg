@@ -108,9 +108,10 @@ namespace MazeGame.View.Renderers
             {
                 middlePanel.AddRange(VSbanner);
                 middlePanel.Add(string.Empty);
-                middlePanel.Add("CLASSIC ATTACK");
-                middlePanel.Add("STEALTH ATTACK");
-                middlePanel.Add("MAGICAL ATTACK");
+                foreach (var attack in _session.PossibleAttacks)
+                {
+                    middlePanel.Add(attack.Name);
+                }
             }
             return middlePanel;
         }

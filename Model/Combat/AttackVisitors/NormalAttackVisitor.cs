@@ -11,6 +11,7 @@ namespace MazeGame.Model.Combat
 
         private Player _player;
 
+        public override string Name => "CLASSIC ATTACK";
         public NormalAttackVisitor(Player player)
         {
             _player = player;

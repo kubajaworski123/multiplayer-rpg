@@ -8,8 +8,8 @@ namespace MazeGame.Model.Combat
 {
     public class StealthAttackVisitor: IAttackVisitor
     {
-
         private Player _player;
+        public override string Name => "STEALTH ATTACK";
         public StealthAttackVisitor(Player player)
         {
             _player = player;

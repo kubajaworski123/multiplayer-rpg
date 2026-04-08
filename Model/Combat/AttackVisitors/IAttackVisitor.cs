@@ -8,6 +8,7 @@ namespace MazeGame.Model.Combat
 {
     public abstract class IAttackVisitor
     {
+        public abstract string Name { get; }
         public int CalculatedPlayerDefense { get; protected set; }
         public int CalculatedDamageToEnemy { get; protected set; }
         public abstract void Visit(HeavyWeapon core, Items.Item context);

@@ -21,13 +21,7 @@ namespace MazeGame.Controller.CombatHandlers
         {
             if (keyInfo.Key == ConsoleKey.Enter)
             {
-                IAttackVisitor visitor = _session.HighlightedAttackOtption switch
-                {
-                    0 => new NormalAttackVisitor(_player),
-                    1 => new StealthAttackVisitor(_player),
-                    2 => new MagicAttackVisitor(_player),
-                    _ => new NormalAttackVisitor(_player)
-                };
+                IAttackVisitor visitor = _session.PossibleAttacks[_session.HighlightedAttackOtption];
 
                 _player.CurrentAttackStyle = visitor;
                 _session.PlayersTurn();
