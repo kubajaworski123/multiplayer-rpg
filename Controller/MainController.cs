@@ -1,67 +1,35 @@
-﻿using MazeGame.Controller.MainMapHandlers;
-using MazeGame.Controller.UsersManualHandlers;
-using MazeGame.Model;
-using MazeGame.Model.Items;
-using MazeGame.Model.Map;
-using MazeGame.View;
+﻿using MazeGame.Controller.GameStates;
+using MazeGame.View.Renderers;
 using System;
 
 namespace MazeGame.Controller;
 
 public class MainController
 {
-    private readonly Player _player;
-    private readonly Map _map;
-    private readonly FrameRenderer _renderer;
-    private readonly UsersManualRenderer _usersManualRenderer;
+    private readonly GameStateManager _stateManager;
+    public static bool IsRunning { get; private set; } = true;
 
-    private static InputHandler? _UsedInputChain;
-    private static InputHandler? _MapInputChain;
-    private static InputHandler? _UsersManualInputChain;
-
-    private static bool _isRunning;
-
-    public MainController(Player player, Map map, FrameRenderer renderer, InputHandler cor, UsersManualRenderer umRenderer)
+    public MainController(GameStateManager stateManager)
     {
-        _player = player;
-        _map = map;
-        _renderer = renderer;
-        _isRunning = true;
-        _MapInputChain = cor;
-        _UsedInputChain = _MapInputChain;
-        _usersManualRenderer = umRenderer;
-        var exitUM = new ExitUsersManualHandler(_renderer);
-        var scrollUp = new ScrollUpHandler(_usersManualRenderer);
-        var scrollDown = new ScrollDownHandler(_usersManualRenderer);
-        var exit = new ExitHandler();
-        _UsersManualInputChain = exitUM;
-        exitUM.SetNextHandler(exit); exit.SetNextHandler(scrollUp); scrollUp.SetNextHandler(scrollDown);
+        _stateManager = stateManager;
     }
+
     public static void StopRunning()
     {
-        _isRunning = false;
+        IsRunning = false;
     }
-    public static void ChangeToMapHandler()
-    {
-        _UsedInputChain = _MapInputChain;
-    }
-    public static void ChangeToUmRenderer()
-    {
-        _UsedInputChain = _UsersManualInputChain;
-    }
+
     public void Run()
     {
-        _renderer.GetNewFrame();
-        _renderer.RenderFrame();
-
-        while (_isRunning)
+        while (IsRunning)
         {
             if (Console.KeyAvailable)
             {
                 ConsoleKeyInfo keyInfo = Console.ReadKey(true);
-                _UsedInputChain?.Handle(keyInfo);
+                _stateManager.HandleInput(keyInfo);
             }
         }
+        _stateManager.PushState(new GameOverState(new GameOverRenderer()));
         Console.Clear();
     }
 }

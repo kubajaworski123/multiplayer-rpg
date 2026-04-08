@@ -1,57 +1,62 @@
-﻿using MazeGame.Model;
-using MazeGame.Model.Items;
-using MazeGame.Model.Map;
-using MazeGame.View;
+﻿using MazeGame.Controller;
+using MazeGame.Controller.CombatHandlers;
+using MazeGame.Controller.GameStates;
+using MazeGame.Model;
+using MazeGame.Model.Combat;
+using MazeGame.Model.Dungeon;
+using MazeGame.Model.Players;
+using MazeGame.View.Renderers;
 using System;
 
 namespace MazeGame.Controller.MainMapHandlers;
 
-public class MovementHandler(Player player, Map map, FrameRenderer renderer) : InputHandler
+public class MovementHandler(Player player, Map map, FrameRenderer renderer, GameStateManager manager) : InputHandler
 {
     private readonly Player _player = player;
     private readonly Map _map = map;
     private readonly FrameRenderer _renderer = renderer;
-
+    private readonly GameStateManager _stateManager = manager;
     public void Refresh()
     {
-        _renderer.GetNewFrame();
-        _renderer.RenderFrame();
+        _renderer.Prepare();
+        _renderer.Render();
     }
     public override void Handle(ConsoleKeyInfo keyInfo)
     {
-        int newX = _player.X;
-        int newY = _player.Y;
-        bool isMovementKey = true;
-        switch (keyInfo.Key)
+        var (dx, dy, isMovementKey) = keyInfo.Key switch
         {
-            case ConsoleKey.UpArrow:
-            case ConsoleKey.W:
-                newY--;
-                break;
-            case ConsoleKey.DownArrow:
-            case ConsoleKey.S:
-                newY++;
-                break;
-            case ConsoleKey.LeftArrow:
-            case ConsoleKey.A:
-                newX--;
-                break;
-            case ConsoleKey.RightArrow:
-            case ConsoleKey.D:
-                newX++;
-                break;
-            default:
-                isMovementKey = false;
-                break;
-        }
+            var k when k == KeyBinds.ForwardKey => (0, -1, true),
+            var k when k == KeyBinds.BackwardKey => (0, 1, true),
+            var k when k == KeyBinds.LeftKey => (-1, 0, true),
+            var k when k == KeyBinds.RightKey => (1, 0, true),
+            _ => (0, 0, false)
+        };
 
         if (isMovementKey)
         {
+            int newX = _player.X + dx;
+            int newY = _player.Y + dy;
+
             if (CanMoveTo(newX, newY))
             {
                 _player.X = newX;
                 _player.Y = newY;
                 Refresh();
+                var mobs = _map.GetMobsFromTile(newX, newY);
+                if (mobs.Count > 0)
+                {
+                    var mob = mobs[0];
+                    var combatSession = new CombatSession(_player, mob);
+                    var combatRenderer = new CombatRenderer(_player, mob, combatSession);
+
+                    var switchHandler = new SwitchAttackHandler(combatRenderer, combatSession);
+                    var choseHandler = new ChooseAttackHandler(_player, combatRenderer, combatSession,_stateManager,_map);
+                    choseHandler.SetNextHandler(switchHandler);
+
+                    var combatState = new CombatState(combatRenderer, choseHandler);
+
+                    _stateManager.PushState(combatState);
+                }
             }
         }
         else

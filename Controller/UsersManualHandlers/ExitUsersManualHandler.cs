@@ -1,23 +1,18 @@
-﻿using MazeGame.View;
+﻿using MazeGame.Controller;
+using MazeGame.Controller.GameStates;
 using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace MazeGame.Controller.UsersManualHandlers
 {
-    internal class ExitUsersManualHandler(FrameRenderer renderer): InputHandler
+    internal class ExitUsersManualHandler(GameStateManager stateManager) : InputHandler
     {
-        private FrameRenderer _renderer = renderer;
+        private GameStateManager _stateManager = stateManager;
+
         public override void Handle(ConsoleKeyInfo keyInfo)
         {
-            if (keyInfo.Key == ConsoleKey.H)
+            if (keyInfo.Key == KeyBinds.HelpKey)
             {
-                MainController.ChangeToMapHandler();
-                Console.Clear();
-                Console.SetCursorPosition(0, 0);
-                _renderer.GetNewFrame();
-                _renderer.RenderFrame();
+                _stateManager.PopState();
             }
             else
             {

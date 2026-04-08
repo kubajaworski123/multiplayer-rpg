@@ -1,45 +1,75 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using MazeGame.Model.Map;
+using MazeGame.Model.Dungeon;
 using MazeGame.View;
+using MazeGame.Model.Combat;
+using MazeGame.Model.MapEntities;
+using MazeGame.Model.Players;
 
 namespace MazeGame.Model.Items;
 
 public class Item(string name, char symbol) : MapEntity(name, symbol)
 {
-    public static List<Item> Items { get; private set; } = new List<Item>()
+    public virtual int Damage => 0;
+    public virtual void Accept(IAttackVisitor visitor, Item context)
     {
-        new Item("Rusty Key", 'k'),
-        new Item("Golden Skeleton Key", 'K'),
-        new Item("Mysterious Scroll", 's'),
-        new Item("Broken Compass", 'c'),
-        new Item("Silver Chalice", 'C'),
-        new Item("Dusty Tome", 't'),
-        new Item("Glowing Gem", 'g'),
-        new Item("Strange Gear", 'G'),
-        new Item("Torn Map", 'm'),
-        new Item("Empty Bottle", 'b')
-    };
+        visitor.Visit(this, context);
+    }
     public override void PickUp(Player player)
     {
-        player.AddToInventory(this);
+        player.Backpack.AddToInventory(this);
     }
-    public virtual void Equip(Player player, Map.Map map) 
+    public virtual void Equip(Player player, Map map) 
     {
-        Logger.SingletonLogger.Add($"You can't equip {Name}.");
+        if (player.LeftHand == null)
+        {
+            player.LeftHand = this;
+        }
+        else if (player.RightHand == null)
+        {
+            player.RightHand = this;
+        }
+        else if (player.LeftHand == player.RightHand)
+        {
+            if (player.Backpack.Inventory.Count < player.Backpack.InventoryCapacity)
+            {
+                player.Backpack.AddToInventory(player.LeftHand);
+                player.LeftHand = this;
+                player.RightHand = null;
+            }
+            else
+            {
+                player.RightHand.Drop(player, map);
+                player.LeftHand = this;
+                player.RightHand = null;
+            }
+        }
+        else
+        {
+            if (player.Backpack.Inventory.Count < player.Backpack.InventoryCapacity)
+            {
+                player.Backpack.AddToInventory(player.LeftHand);
+                player.LeftHand = this;
+            }
+            else
+            {
+                player.LeftHand.Drop(player, map);
+                player.LeftHand = this;
+            }
+        }
     }
 
-    public virtual void Drop(Player player, Map.Map map) 
+    public virtual void Drop(Player player, Map map) 
     {
         int x = player.X;
         int y = player.Y;
         map.Tiles[x, y].AddMapEntity(this);
-        player.RemoveFromInventory(this);
+        player.Backpack.RemoveFromInventory(this);
     }
 
     public override string ToString()
     {
-        return $"{Name}";
+        return $"{Name} ({Damage})";
     }
 }

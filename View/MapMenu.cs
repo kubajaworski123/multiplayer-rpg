@@ -33,20 +33,20 @@ namespace MazeGame.View
             int bannerL = _banner[0].Length;
             int drawWidth = Console.WindowWidth - 1;
             int linesToFillAtTheBottom = Console.WindowHeight - bannerH - _maps.Count - 3;
-            sb.AppendLine(SubtitlesUtils.GenerateStarLine(drawWidth,"\x1b[93m"));
+            sb.AppendLine(ViewUtils.GenerateStarLine(drawWidth,"\x1b[93m"));
             foreach (string line in _banner)
             {
-                sb.AppendLine(SubtitlesUtils.GenerateStarLine(drawWidth, line));
+                sb.AppendLine(ViewUtils.GenerateStarLine(drawWidth, line));
             }
-            sb.AppendLine(SubtitlesUtils.GenerateStarLine(drawWidth, "\x1b[0m"));
+            sb.AppendLine(ViewUtils.GenerateStarLine(drawWidth, "\x1b[0m"));
 
             for (int i = 0; i < _maps.Count; i++)
             {
-                sb.AppendLine(SubtitlesUtils.GenerateStarLine(drawWidth, _maps[i], i == highlitedOption? true : false));
+                sb.AppendLine(ViewUtils.GenerateStarLine(drawWidth, _maps[i], i == highlitedOption? true : false));
             }
             for(int i = 0; i < linesToFillAtTheBottom; i++)
             {
-                sb.AppendLine(SubtitlesUtils.GenerateStarLine(drawWidth, string.Empty));
+                sb.AppendLine(ViewUtils.GenerateStarLine(drawWidth, string.Empty));
             }
         }
         public int DisplayMenuFrame()

@@ -1,10 +1,12 @@
-﻿using MazeGame.Model.Items;
-using MazeGame.Model.Map;
-using MazeGame.View;
+﻿using MazeGame.Controller;
+using MazeGame.Model.Items;
+using MazeGame.Model.Dungeon;
+using MazeGame.View.Renderers;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.Swift;
 using System.Text;
+using MazeGame.Model.Players;
 
 namespace MazeGame.Controller.MainMapHandlers;
 
@@ -15,12 +17,12 @@ public class EquipHandler (Player player, Map map, FrameRenderer renderer) : Inp
     private readonly Map _map = map;
     private void Equip(int x)
     {
-        if (_player.Inventory.Count > x)
+        if (_player.Backpack.Inventory.Count > x)
         {
-            Item item = _player.Inventory[x];
+            Item item = _player.Backpack.Inventory[x];
             item.Equip(_player, _map);
-            _renderer.GetNewFrame();
-            _renderer.RenderFrame();
+            _renderer.Prepare();
+            _renderer.Render();
         }
     }
 

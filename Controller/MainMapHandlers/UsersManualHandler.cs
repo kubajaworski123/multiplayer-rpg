@@ -1,19 +1,20 @@
-﻿using MazeGame.View;
+﻿using MazeGame.Controller;
+using MazeGame.Controller.GameStates;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MazeGame.Controller.MainMapHandlers
 {
-    internal class UsersManualHandler(UsersManualRenderer umRenderer) : InputHandler
+    internal class UsersManualHandler(GameStateManager stateManager, UserManualState manualState) : InputHandler
     {
-        private UsersManualRenderer _usersManualRenderer = umRenderer;
+        public static ConsoleKey ManualKey = ConsoleKey.H;
+        private GameStateManager _stateManager = stateManager;
+        private UserManualState _manualState = manualState;
+
         public override void Handle(ConsoleKeyInfo keyInfo)
         {
-            if (keyInfo.Key == ConsoleKey.H)
+            if (keyInfo.Key == KeyBinds.HelpKey)
             {
-                _usersManualRenderer.DisplayUsersManual();
-                MainController.ChangeToUmRenderer();
+                _stateManager.PushState(_manualState);
             }
             else
             {
