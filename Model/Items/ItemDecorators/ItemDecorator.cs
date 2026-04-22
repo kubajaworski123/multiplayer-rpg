@@ -7,7 +7,8 @@ namespace MazeGame.Model.Items.ItemDecorators
     public abstract class ItemDecorator : Item
     {
         protected Item _decoratedItem;
-
+        public override ItemRarity Rarity => _decoratedItem.Rarity;
+        public override bool IsTwoHanded => _decoratedItem.IsTwoHanded;
         public ItemDecorator(Item decoratedItem) : base(decoratedItem.Name, decoratedItem.Symbol)
         {
             _decoratedItem = decoratedItem;
@@ -21,11 +22,15 @@ namespace MazeGame.Model.Items.ItemDecorators
             _decoratedItem.Accept(visitor, context);
         }
 
-        public override void PickUp(Player player)
+        public override bool PickUp(Player player)
         {
-            _decoratedItem.PickUp(player);
-            player.Backpack.RemoveFromInventory(_decoratedItem);
-            player.Backpack.AddToInventory(this);
+            bool picked = _decoratedItem.PickUp(player);
+            if (picked)
+            {
+                player.Backpack.RemoveFromInventory(_decoratedItem);
+                player.Backpack.AddToInventory(this);
+            }
+            return picked;
         }
 
         public override void Drop(Player player, Map map)

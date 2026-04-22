@@ -66,4 +66,8 @@ public class Player : Character, ICombat
             ModifyHealth(-realDamage);
         }
     }
+    public void setName(string name)
+    {
+        this.Name = name;
+    }
 }

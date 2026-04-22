@@ -48,6 +48,7 @@ namespace MazeGame.Controller.GameStates
             if (_states.Count > 0)
             {
                 _states.Peek().HandleInput(keyInfo);
+                Render();
             }
         }
 

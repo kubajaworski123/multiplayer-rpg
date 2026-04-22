@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MazeGame.Model.Items;
+using System;
 using System.Threading;
 
 public static class ViewUtils
@@ -44,6 +45,21 @@ public static class ViewUtils
     public static string YellowCode { get; } = "\x1b[93m";
     public static string ResetCode { get; } = "\x1b[0m";
     public static string RedCode { get; } = "\x1b[31m";
+    public static string BlueCode { get; } = "\x1b[34m";
+    public static string GreenCode { get; } = "\x1b[32m";
+
+    public static string CodeToRarity(ItemRarity rarity)
+    {
+        return rarity switch
+        {
+            ItemRarity.Common => YellowCode,
+            ItemRarity.Fine => BlueCode,
+            ItemRarity.Legendary => RedCode,
+            ItemRarity.Artifact => GreenCode,
+            _ => YellowCode
+        };
+    }
+
     private static int GetVisibleLength(string text)
     {
         if (string.IsNullOrEmpty(text)) return 0;

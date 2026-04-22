@@ -14,4 +14,5 @@ public interface IMapBuilder
     void AddItems(int count);
     void AddWeapons(int count);
     void AddMobs(int count);
+    void AddArtifact();
 }

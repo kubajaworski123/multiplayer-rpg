@@ -94,7 +94,7 @@ namespace MazeGame.Model.Characters
             @"|                                  |",
             @" ---------------------------------- "
         };
-        public static readonly List<string> PlayerBanner = new List<string>()
+        public static readonly List<string> PlayerBanner = new List<string>() 
         {
             @" ---------------------------------- ",
             @"|   _                              |",

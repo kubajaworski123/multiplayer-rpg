@@ -51,7 +51,6 @@ namespace MazeGame.View.Renderers
             if (_scrollOffset > 0)
             {
                 _scrollOffset--;
-                Render();
             }
         }
 
@@ -61,7 +60,6 @@ namespace MazeGame.View.Renderers
             if (_scrollOffset < maxOffset)
             {
                 _scrollOffset++;
-                Render();
             }
         }
 

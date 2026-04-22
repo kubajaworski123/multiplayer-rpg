@@ -1,19 +1,21 @@
-﻿using MazeGame.Model.Items;
+﻿using MazeGame.Model.Characters;
 using MazeGame.Model.Dungeon;
+using MazeGame.Model.Dungeon.Themes;
+using MazeGame.Model.Items;
 using MazeGame.Model.Weapons;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
-using MazeGame.Model.Characters;
 namespace MazeGame.Model.Builders;
-public class ConcreteMapBuilder : IMapBuilder
+public class ConcreteMapBuilder(IDungeonThemeFactory theme) : IMapBuilder
 {
     private Map _map;
     private List<Chamber> _chambers = new List<Chamber>();
     private Random _random = new Random();
     private const int MAX_TRIES = 1000;
     bool    _startedEmpty = true;
+    private readonly IDungeonThemeFactory _theme = theme;
     public void BuildEmptyDungeon(int width, int height)
     {
         _map = new Map(width, height, false);
@@ -242,7 +244,7 @@ public class ConcreteMapBuilder : IMapBuilder
         for (int i = 0; i < count; i++)
         {
             int rTile = _random.Next(0,nonWallN);
-            nonWall[rTile].AddMapEntity(ItemFactory.CreateRandomDecoratedItem());
+            nonWall[rTile].AddMapEntity(_theme.GetRandomItem());
         }
     }
     public void AddWeapons(int count)
@@ -252,7 +254,7 @@ public class ConcreteMapBuilder : IMapBuilder
         for (int i = 0; i < count; i++)
         {
             int rTile = _random.Next(0, nonWallN);
-            nonWall[rTile].AddMapEntity(ItemFactory.CreateRandomDecoratedWeapon());
+            nonWall[rTile].AddMapEntity(_theme.GetRandomWeapon());
         }
     }
     public void AddMobs(int count)
@@ -263,9 +265,18 @@ public class ConcreteMapBuilder : IMapBuilder
         {
             int rTile = _random.Next(0, nonWallN);
             (int x, int y) = nonWall[rTile];
-            Mob mob = MobsList.GetRandomMob();
+            Mob mob = _theme.GetRandomMob();
             mob.Move(x, y);
             _map.AddCombatant(mob);
+        }
+    }
+    public void AddArtifact()
+    {
+        var nonWall = _map.GetNonWallTiles();
+        if (nonWall.Count > 0)
+        {
+            int rTile = _random.Next(0, nonWall.Count);
+            nonWall[rTile].AddMapEntity(_theme.GetArtifact());
         }
     }
     public Map GetMap()

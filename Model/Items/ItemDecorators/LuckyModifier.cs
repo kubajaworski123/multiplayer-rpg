@@ -12,10 +12,12 @@ namespace MazeGame.Model.Items.ItemDecorators
 
         public override string Name => _decoratedItem.Name + " (Lucky)";
 
-        public override void PickUp(Player player)
+        public override bool PickUp(Player player)
         {
-            base.PickUp(player);
-            player.Stats.ModifyLuck(5);
+            bool picked = base.PickUp(player);
+            if (picked) 
+                player.Stats.ModifyLuck(5);
+            return picked;
         }
         
         public override void Drop(Player player, Map map)

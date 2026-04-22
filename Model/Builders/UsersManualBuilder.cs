@@ -169,7 +169,8 @@ namespace MazeGame.Model.Builders
                 _help.AddRange(_mobsStrings);
             }
         }
-        public List<string> getUsersManual()
+        public void AddArtifact() { }
+        public List<string> GetUsersManual()
         {
             return _help;
         }

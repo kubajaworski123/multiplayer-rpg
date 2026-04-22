@@ -7,8 +7,12 @@ namespace MazeGame.Model.MapEntities.Currencies;
 
 public class Money(string name, char symbol, int amount) : Currency(name, symbol, amount)
 {
-    public override void PickUp(Player player)
+    public override bool PickUp(Player player)
     {
         player.Backpack.ModifyMoney(Amount);
+        return true;
+
+
+
     }
 }

@@ -1,5 +1,6 @@
 ﻿using MazeGame.Model.Builders;
 using MazeGame.Model.Dungeon;
+using MazeGame.Model.Observers;
 using MazeGame.Model.Players;
 using MazeGame.View;
 using System;
@@ -8,7 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace MazeGame.View.Renderers;
-public class FrameRenderer(Player player, Map map, List<string> controlsList) : IRenderer
+public class FrameRenderer(Player player, Map map, List<string> controlsList, MapViewLogger mapViewLogger) : IRenderer
 {
 
     static readonly int middlePanelWidth = 41;
@@ -23,6 +24,7 @@ public class FrameRenderer(Player player, Map map, List<string> controlsList) : 
     private Player player = player;
     public int? SelectedEntityIndex { get; set; } = null;
     private Tile currTile => map.Tiles[player.X, player.Y];
+    private MapViewLogger _logger = mapViewLogger;
 
     private List<string> _banner = new List<string>()
     {   
@@ -117,7 +119,9 @@ public class FrameRenderer(Player player, Map map, List<string> controlsList) : 
 
         for (int i = 0; i < player.Backpack.InventoryCapacity; i++)
         {
-            string itemName = i < player.Backpack.Inventory.Count ? player.Backpack.Inventory[i].ToString() : "Empty";
+            string itemName = i < player.Backpack.Inventory.Count ?
+            ViewUtils.CodeToRarity(player.Backpack.Inventory[i].Rarity) + player.Backpack.Inventory[i].ToString() + ViewUtils.YellowCode 
+            : "";
             inventory.Add(GetSectionContentLine($"{i}: {itemName}", sidePanelWidth));
         }
         return inventory;
@@ -129,7 +133,8 @@ public class FrameRenderer(Player player, Map map, List<string> controlsList) : 
 
         if (player.LeftHand != null)
         {
-            lH.Append(player.LeftHand.Name).Append(' ').Append(player.LeftHand.Damage);
+            lH.Append( ViewUtils.CodeToRarity(player.LeftHand.Rarity) + player.LeftHand.ToString()
+                       + ViewUtils.YellowCode).Append(' ').Append(player.LeftHand.Damage);
         }
         else
         {
@@ -138,11 +143,12 @@ public class FrameRenderer(Player player, Map map, List<string> controlsList) : 
 
         if (player.RightHand != null)
         {
-            rH.Append(player.RightHand.Name).Append(' ').Append(player.RightHand.Damage);
+            rH.Append( ViewUtils.CodeToRarity(player.RightHand.Rarity) + player.RightHand.ToString()
+                       + ViewUtils.YellowCode).Append(' ').Append(player.RightHand.Damage);
         }
         else
         {
-            rH.Append("Empty");
+            rH.Append("");
         }
 
         List<string> hands = new List<string>()
@@ -191,7 +197,7 @@ public class FrameRenderer(Player player, Map map, List<string> controlsList) : 
         };
         for (int i = 0; i < 3; i++)
         {
-            log.Add(GetSectionContentLine($"{Logger.SingletonLogger[i]}", middlePanelWidth));
+            log.Add(GetSectionContentLine($"{_logger[i]}", middlePanelWidth));
         }
         log.Add(GetSectionBottomLine(middlePanelWidth));
         return log;

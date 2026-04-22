@@ -7,64 +7,37 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices.Swift;
 using System.Text;
 using MazeGame.Model.Players;
+using MazeGame.Model.Observers;
 
 namespace MazeGame.Controller.MainMapHandlers;
 
-public class EquipHandler (Player player, Map map, FrameRenderer renderer) : InputHandler
+public class EquipHandler (Player player, Map map, LogBus logBus) : InputHandler
 {
+    private const int CONSOLE_KEY_D0 = 48;
+    private const int CONSOLE_KEY_D9 = 57;
+    private const int NO_MODIFIERS = 0;
     private readonly Player _player = player;
-    private readonly FrameRenderer _renderer = renderer;
     private readonly Map _map = map;
+    private readonly LogBus _logBus = logBus;
     private void Equip(int x)
     {
         if (_player.Backpack.Inventory.Count > x)
         {
             Item item = _player.Backpack.Inventory[x];
             item.Equip(_player, _map);
-            _renderer.Prepare();
-            _renderer.Render();
+            _logBus.Publish($"{_player.Name} equips {item.Name}");
         }
     }
 
     public override void Handle(ConsoleKeyInfo keyInfo)
-    {
-        if (keyInfo.Modifiers == 0)
-            switch (keyInfo.Key)
-            {
-                case ConsoleKey.D1:
-                    Equip(1);
-                    break;
-                case ConsoleKey.D2:
-                    Equip(2);
-                    break;
-                case ConsoleKey.D3:
-                    Equip(3);
-                    break;
-                case ConsoleKey.D4:
-                    Equip(4);
-                    break;
-                case ConsoleKey.D5:
-                    Equip(5);
-                    break;
-                case ConsoleKey.D6:
-                    Equip(6);
-                    break;
-                case ConsoleKey.D7:
-                    Equip(7);
-                    break;
-                case ConsoleKey.D8:
-                    Equip(8);
-                    break;
-                case ConsoleKey.D9:
-                    Equip(9);
-                    break;
-                case ConsoleKey.D0:
-                    Equip(0);
-                    break;
-                default:
-                    base.Handle(keyInfo);
-                    break;
-            }
+    { 
+        int keyCode = (int)keyInfo.Key;
+
+        if (keyCode >= CONSOLE_KEY_D0 && keyCode <= CONSOLE_KEY_D9 && keyInfo.Modifiers == NO_MODIFIERS)
+        {
+            int index = keyCode - CONSOLE_KEY_D0;
+            Equip(index);
+        }
         else
         {
             base.Handle(keyInfo);

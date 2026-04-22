@@ -12,10 +12,12 @@ namespace MazeGame.Model.Items.ItemDecorators
 
         public override string Name => _decoratedItem.Name + " (Handy)";
 
-        public override void PickUp(Player player)
+        public override bool PickUp(Player player)
         {
-            base.PickUp(player);
-            player.Stats.ModifyAgility(3);
+            bool picked = base.PickUp(player);
+            if (picked) 
+                player.Stats.ModifyAgility(3);
+            return picked;
         }
 
         public override void Drop(Player player, Map map)

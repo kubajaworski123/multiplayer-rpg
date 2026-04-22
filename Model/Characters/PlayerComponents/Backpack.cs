@@ -15,16 +15,14 @@ namespace MazeGame.Model.Characters.PlayerComponents
         public void ModifyGold(int amount) { Gold += amount; }
         public void ModifyMoney(int amount) { Money += amount; }
 
-        public void AddToInventory(Item item)
+        public bool AddToInventory(Item item)
         {
             if (Inventory.Count < InventoryCapacity)
             {
                 Inventory.Add(item);
+                return true;
             }
-            else
-            {
-                Logger.SingletonLogger.Add("Inventory is full");
-            }
+            return false;
         }
         public void RemoveFromInventory(Item item)
         {

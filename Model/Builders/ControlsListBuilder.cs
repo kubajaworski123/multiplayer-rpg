@@ -91,6 +91,7 @@ public class ControlsListBuilder: IMapBuilder
     }
 
     public void AddMobs(int count) { }
+    public void AddArtifact() { }
     public List<string> GetControls()
     {
         return Controls;

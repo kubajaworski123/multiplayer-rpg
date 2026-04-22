@@ -58,11 +58,12 @@ namespace MazeGame.Model.Builders
         public void AddMobs(int count)
         {
         }
-        public List<String> GetManual()
+        public List<String> GetSubtitles()
         {
             _manual.Add("MAY THE FORCE BE WITH YOU BRAVE TRAVELER AS YOU DESCEND INTO THE PLANETS DEPTHS!"); //80
             _manual.Sort((x, y) => x.Length.CompareTo(y.Length));
             return _manual;
         }
+        public void AddArtifact() { }
     }
 }

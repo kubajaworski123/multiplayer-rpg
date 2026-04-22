@@ -7,27 +7,31 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using MazeGame.Model.Players;
+using MazeGame.Model.Observers;
 
 namespace MazeGame.Model.Builders;
 
 public class CORMapBuilder(Player player, Map map, FrameRenderer renderer,
-    GameStateManager stateManager, UserManualState manualState, GameOverState gameOverState) : IMapBuilder
+    GameStateManager stateManager, UserManualState manualState, GameOverState gameOverState, AllLogsState allLogsState, LogBus logbus) : IMapBuilder
 {
     private bool _move         = false;
     private bool _exit         = false;
     private bool _pickup       = false;
     private bool _equip        = false;
     private bool _drop         = false;
+    private bool _logs         = false;
+
 
     Player _player = player;
     Map _map = map;
     FrameRenderer _renderer = renderer;
-    public InputHandler? COR { get; private set; } =  new UnknownInputHandler(map,player,renderer);
+    LogBus _logbus = logbus;
+    public InputHandler? COR { get; private set; } =  new UnknownInputHandler(map,player,logbus);
     public void BuildCentralHall(int width, int height)
     {
         if (!_move && COR != null)
         {
-            var mH = new MovementHandler(player, map, renderer, stateManager);
+            var mH = new MovementHandler(player, map, stateManager, logbus);
             mH.SetNextHandler(COR);
             COR = mH;
             _move = true;
@@ -38,7 +42,7 @@ public class CORMapBuilder(Player player, Map map, FrameRenderer renderer,
     {
         if (!_move && COR != null)
         {
-            var mH = new MovementHandler(player, map, renderer, stateManager);
+            var mH = new MovementHandler(player, map, stateManager, logbus);
             mH.SetNextHandler(COR);
             COR = mH;
             _move = true;
@@ -49,7 +53,7 @@ public class CORMapBuilder(Player player, Map map, FrameRenderer renderer,
     {
         if (!_move && COR != null)
         {
-            var mH = new MovementHandler(player, map, renderer, stateManager);
+            var mH = new MovementHandler(player, map, stateManager, logbus);
             mH.SetNextHandler(COR);
             COR = mH;
             _move = true;
@@ -63,7 +67,7 @@ public class CORMapBuilder(Player player, Map map, FrameRenderer renderer,
         COR = UMH;
         if (!_move && COR != null)
         {
-            var mH = new MovementHandler(player, map, renderer, stateManager);
+            var mH = new MovementHandler(player, map, stateManager, logbus);
             mH.SetNextHandler(COR);
             COR = mH;
             _move = true;
@@ -74,6 +78,13 @@ public class CORMapBuilder(Player player, Map map, FrameRenderer renderer,
             eH.SetNextHandler(COR);
             COR = eH;
             _exit = true;
+        }
+        if(!_logs && COR != null)
+        {
+            var lH = new AllLogsHandler(stateManager, allLogsState);
+            lH.SetNextHandler(COR);
+            COR = lH;
+            _logs = true;
         }
     }
 
@@ -89,20 +100,27 @@ public class CORMapBuilder(Player player, Map map, FrameRenderer renderer,
             COR = eH;
             _exit = true;
         }
+        if (!_logs && COR != null)
+        {
+            var lH = new AllLogsHandler(stateManager, allLogsState);
+            lH.SetNextHandler(COR);
+            COR = lH;
+            _logs = true;
+        }
     }
 
     public void AddItems(int count)
     {
         if(! _pickup && COR != null)
         {
-            var pH = new PickupHandler(player, map, _renderer);
+            var pH = new PickupHandler(player, map, logbus);
             pH.SetNextHandler(COR);
             COR = pH;
             _pickup = true;
         }
         if (!_drop && COR != null)
         {
-            var dH = new DropHandler(player, map, renderer);
+            var dH = new DropHandler(player, map);
             dH.SetNextHandler(COR);
             COR = dH;
             _drop = true;
@@ -113,30 +131,28 @@ public class CORMapBuilder(Player player, Map map, FrameRenderer renderer,
     {
         if (!_pickup && COR != null)
         {
-            var pH = new PickupHandler(player, map, _renderer);
+            var pH = new PickupHandler(player, map, logbus);
             pH.SetNextHandler(COR);
             COR = pH;
             _pickup = true;
         }
         if(! _equip  && COR != null)
         {
-            var eqH = new EquipHandler(player,map,renderer);
+            var eqH = new EquipHandler(player,map,logbus);
             eqH.SetNextHandler(COR);
             COR = eqH;
             _equip = true;
         }
         if(! _drop && COR != null)
         {
-            var dH = new DropHandler(player, map, renderer);
+            var dH = new DropHandler(player, map);
             dH.SetNextHandler(COR);
             COR = dH;
             _drop = true;
         }
     }
-    public void AddMobs(int count)
-    {
-    
-    }
+    public void AddMobs(int count){}
+    public void AddArtifact() {}
     public InputHandler? GetCOR()
     {
         return COR;

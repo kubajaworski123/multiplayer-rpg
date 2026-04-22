@@ -12,13 +12,16 @@ namespace MazeGame.Model.Items;
 public class Item(string name, char symbol) : MapEntity(name, symbol)
 {
     public virtual int Damage => 0;
+    public virtual bool IsTwoHanded => false;
+    public virtual ItemRarity Rarity { get; set; } = ItemRarity.Common;
     public virtual void Accept(IAttackVisitor visitor, Item context)
     {
         visitor.Visit(this, context);
     }
-    public override void PickUp(Player player)
+    public override bool PickUp(Player player)
     {
-        player.Backpack.AddToInventory(this);
+        bool result = player.Backpack.AddToInventory(this);
+        return result;
     }
     public virtual void Equip(Player player, Map map) 
     {
