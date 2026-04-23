@@ -14,6 +14,7 @@ using MazeGame.View.Renderers;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace MazeGame
 {
@@ -42,11 +43,18 @@ namespace MazeGame
             LevelData level = BuilderDirector.ProcessLevel(theme);
 
             ShowIntro(level);
-
+            ShowThemeMsg(theme.WelcomeMessage);
             GameStateManager stateManager = InitializeGameMachine(player, level, logPath, theme);
 
             var controller = new MainController(stateManager);
             controller.Run();
+        }
+
+        private void ShowThemeMsg(string msg)
+        {
+            var msgRenderer = new ThemeMessageRendrerer(msg);
+            msgRenderer.Prepare();
+            msgRenderer.Render();
         }
 
         private void SetupConsole()
