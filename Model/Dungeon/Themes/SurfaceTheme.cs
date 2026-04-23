@@ -59,7 +59,7 @@ namespace MazeGame.Model.Dungeon.Themes
             return _baseMobs[index]();
         }
 
-        public void ApplyGenerationStrategy(IMapBuilder builder)
+        public void ApplyToBuilder(IMapBuilder builder)
         {
             builder.BuildEmptyDungeon(40, 20);
             builder.BuildChambers(4);

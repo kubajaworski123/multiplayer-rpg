@@ -60,7 +60,7 @@ namespace MazeGame.Model.Dungeon.Themes
             return _sithMobs[index]();
         }
 
-        public void ApplyGenerationStrategy(IMapBuilder builder)
+        public void ApplyToBuilder(IMapBuilder builder)
         {
             builder.BuildFilledDungeon(40, 20);
             builder.BuildCentralHall(10, 5);

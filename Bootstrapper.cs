@@ -133,7 +133,7 @@ namespace MazeGame
             exitAllLogs.SetNextHandler(scrollLogs);
 
             var corBuilder = new CORMapBuilder(player, level.Map, renderer, stateManager, manualState, gameOverState, allLoggerState, logBus);
-            theme.ApplyGenerationStrategy(corBuilder);
+            theme.ApplyToBuilder(corBuilder);
             var mapInputChain = corBuilder.GetCOR();
 
             var mapState = new MapState(renderer, mapInputChain);

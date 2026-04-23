@@ -13,10 +13,10 @@ namespace MazeGame.Model.Builders
             var subtitlesBuilder = new StarWarsSubtitlesBuilder();
             var manualBuilder = new UsersManualBuilder();
 
-            theme.ApplyGenerationStrategy(mapBuilder);
-            theme.ApplyGenerationStrategy(controlsBuilder);
-            theme.ApplyGenerationStrategy(subtitlesBuilder);
-            theme.ApplyGenerationStrategy(manualBuilder);
+            theme.ApplyToBuilder(mapBuilder);
+            theme.ApplyToBuilder(controlsBuilder);
+            theme.ApplyToBuilder(subtitlesBuilder);
+            theme.ApplyToBuilder(manualBuilder);
 
             return new LevelData
             {
