@@ -7,7 +7,7 @@ namespace MazeGame.Controller.MainMapHandlers
     {
         public override void Handle(ConsoleKeyInfo keyInfo)
         {
-            if (keyInfo.Key == ConsoleKey.J)
+            if (keyInfo.Key == KeyBinds.LogsKey)
             {
                 stateManager.PushState(allLogsState);
             }

@@ -1,6 +1,7 @@
 ﻿using MazeGame.Model.Characters;
 using MazeGame.Model.Characters.PlayerComponents;
 using MazeGame.Model.Combat;
+using MazeGame.Model.Dungeon;
 using MazeGame.Model.Items;
 using MazeGame.Model.Weapons;
 using MazeGame.View;
@@ -16,11 +17,11 @@ public class Player : Character, ICombat
     public Backpack Backpack { get; set; } = new Backpack();
     public Item? LeftHand { get; set; }
     public Item? RightHand { get; set; }
-    public override string ColorCode => "\x1b[36m";
+    public override CharacterType Type { get; protected set; } = CharacterType.Player;
     public bool hasWeapons;
     public IAttackVisitor? CurrentAttackStyle { get; set; }
     public int CurrentDefense { get; private set; } = 0;
-
+        
     public void Attack(ICombat target)
     {
         if (CurrentAttackStyle == null) return;
@@ -66,8 +67,11 @@ public class Player : Character, ICombat
             ModifyHealth(-realDamage);
         }
     }
-    public void setName(string name)
+    public void SetName(string name)
     {
         this.Name = name;
+    }
+    public void Move(Map map, int X, int Y)
+    {
     }
 }

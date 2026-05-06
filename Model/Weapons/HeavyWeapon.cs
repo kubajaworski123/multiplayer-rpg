@@ -11,5 +11,6 @@ namespace MazeGame.Model.Weapons
         {
             visitor.Visit(this, context);
         }
+        public override int NoiseRange => 14; 
     }
 }

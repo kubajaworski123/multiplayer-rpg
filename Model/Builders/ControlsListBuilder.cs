@@ -1,5 +1,6 @@
 ﻿using MazeGame.Controller;
 using MazeGame.Controller.MainMapHandlers;
+using MazeGame.Model.Characters;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -15,6 +16,7 @@ public class ControlsListBuilder: IMapBuilder
     public static readonly string equipControl = "0-9: EQUIP";
     public static readonly string exitControl = $"{KeyBinds.ExitKey}: EXIT";
     public static readonly string helpControl = $"{KeyBinds.HelpKey}: HELP";
+    public static readonly string logsControl = $"{KeyBinds.LogsKey}: LOGS";
     public List<string> Controls {get; private set;} = new List<string>();
     
     public void BuildFilledDungeon(int width, int height) 
@@ -26,6 +28,10 @@ public class ControlsListBuilder: IMapBuilder
         if (!Controls.Contains(helpControl))
         {
             Controls.Add(helpControl);
+        }
+        if (!Controls.Contains(logsControl))
+        {
+            Controls.Add(logsControl);
         }
     }
     public  void BuildEmptyDungeon(int width, int height)
@@ -41,6 +47,10 @@ public class ControlsListBuilder: IMapBuilder
         if (!Controls.Contains(helpControl))
         {
             Controls.Add(helpControl);
+        }
+        if (!Controls.Contains(logsControl))
+        {
+            Controls.Add(logsControl);
         }
     }
     public void BuildCorridors(int turns) { 
@@ -92,6 +102,7 @@ public class ControlsListBuilder: IMapBuilder
 
     public void AddMobs(int count) { }
     public void AddArtifact() { }
+    public void AddMobGroup(Func<Mob> mobFactory, int count) { }
     public List<string> GetControls()
     {
         return Controls;

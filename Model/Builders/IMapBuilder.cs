@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MazeGame.Model.Characters;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -15,4 +16,5 @@ public interface IMapBuilder
     void AddWeapons(int count);
     void AddMobs(int count);
     void AddArtifact();
+    void AddMobGroup(Func<Mob> mobCreationDelegate, int count);
 }

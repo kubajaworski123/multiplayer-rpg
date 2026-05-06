@@ -14,7 +14,6 @@ namespace MazeGame.Model.Dungeon.Themes
         Item GetArtifact();
         Item GetRandomItem();
         Item GetRandomWeapon();
-        Mob GetRandomMob();
         void ApplyToBuilder(IMapBuilder builder);
     }
 }

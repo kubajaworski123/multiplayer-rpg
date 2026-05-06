@@ -11,21 +11,20 @@ using MazeGame.Model.Observers;
 
 namespace MazeGame.Controller.MainMapHandlers;
 
-public class EquipHandler (Player player, Map map, LogBus logBus) : InputHandler
+public class EquipHandler (Player player, Map map) : InputHandler
 {
     private const int CONSOLE_KEY_D0 = 48;
     private const int CONSOLE_KEY_D9 = 57;
     private const int NO_MODIFIERS = 0;
     private readonly Player _player = player;
     private readonly Map _map = map;
-    private readonly LogBus _logBus = logBus;
     private void Equip(int x)
     {
         if (_player.Backpack.Inventory.Count > x)
         {
             Item item = _player.Backpack.Inventory[x];
             item.Equip(_player, _map);
-            _logBus.Publish($"{_player.Name} equips {item.Name}");
+            LogBus.Logs.Publish($"Equipped {item.Name}");
         }
     }
 

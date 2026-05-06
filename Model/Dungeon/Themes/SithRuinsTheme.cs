@@ -2,6 +2,7 @@
 using MazeGame.Model.Characters;
 using MazeGame.Model.Items;
 using MazeGame.Model.Weapons;
+using MazeGame.View;
 using System;
 using System.Collections.Generic;
 
@@ -27,12 +28,6 @@ namespace MazeGame.Model.Dungeon.Themes
             () => new LightWeapon("Vibro-dagger", 'd', 10, false)
         };
 
-        private readonly List<Func<Mob>> _sithMobs = new List<Func<Mob>>()
-        {
-            () => new Mob("Sith Droid", '!', 100, 1, 1, CharacterBanners.DroidBanner, 20, 1),
-            () => new Mob("Sith Soldier", '!', 100, 1, 1, CharacterBanners.BountyHunterBanner, 15, 10)
-        };
-
         public Item GetArtifact()
         {
             Item artifact = new Item("Sith Crystal", '*');
@@ -54,12 +49,6 @@ namespace MazeGame.Model.Dungeon.Themes
             return ItemFactory.ApplyRandomModifiers(freshWeapon);
         }
 
-        public Mob GetRandomMob()
-        {
-            int index = _random.Next(_sithMobs.Count);
-            return _sithMobs[index]();
-        }
-
         public void ApplyToBuilder(IMapBuilder builder)
         {
             builder.BuildFilledDungeon(40, 20);
@@ -68,8 +57,12 @@ namespace MazeGame.Model.Dungeon.Themes
             builder.BuildCorridors(0);
             builder.AddItems(5);
             builder.AddWeapons(20);
-            builder.AddMobs(3);
+           // builder.AddMobs(3);
             builder.AddArtifact();
+            MobGroup humans = new MobGroup();
+            MobGroup machines = new MobGroup();
+            builder.AddMobGroup(() => new HumanMob(1, 1, humans, "Sith Acolyte", '!', 100, CharacterType.BountyHunter, 5, 2), 3);
+            builder.AddMobGroup(() => new MachineMob(1, 1, machines, "Sith Droid", '!', 100, CharacterType.Droid, 6,1), 3);
         }
     }
 }

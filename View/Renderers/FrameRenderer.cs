@@ -26,16 +26,6 @@ public class FrameRenderer(Player player, Map map, List<string> controlsList, Ma
     private Tile currTile => map.Tiles[player.X, player.Y];
     private MapViewLogger _logger = mapViewLogger;
 
-    private List<string> _banner = new List<string>()
-    {   
-        string.Empty,
-         " __  __   ___   _  _   ___     ___    _   _   _  _   ___   ___  ___   _  _   ___    .",
-        @"|  \/  | |_ _| | \| | |_ _|   |   \  | | | | | \| | / __| | __ / _ \ | \| | / __| .  ",
-        @"| |\/| |  | |  | .` |  | |    | |) | | |_| | | .` | |(_ | | _| |(_)| | .` | \__ \.   ",
-        @"|_|  |_| |___| |_|\_| |___|   |___/   \___/  |_|\_| \___| |___ \___/ |_|\_| |___/    ",
-        string.Empty
-    };
-
     public static string GetTopSectionWithTitle(string title, int width)
     {
         if (title == null) title = string.Empty;
@@ -120,7 +110,7 @@ public class FrameRenderer(Player player, Map map, List<string> controlsList, Ma
         for (int i = 0; i < player.Backpack.InventoryCapacity; i++)
         {
             string itemName = i < player.Backpack.Inventory.Count ?
-            ViewUtils.CodeToRarity(player.Backpack.Inventory[i].Rarity) + player.Backpack.Inventory[i].ToString() + ViewUtils.YellowCode 
+            ViewUtils.RarityToColor(player.Backpack.Inventory[i].Rarity) + player.Backpack.Inventory[i].ToString() + ViewUtils.YellowCode 
             : "";
             inventory.Add(GetSectionContentLine($"{i}: {itemName}", sidePanelWidth));
         }
@@ -133,7 +123,7 @@ public class FrameRenderer(Player player, Map map, List<string> controlsList, Ma
 
         if (player.LeftHand != null)
         {
-            lH.Append( ViewUtils.CodeToRarity(player.LeftHand.Rarity) + player.LeftHand.ToString()
+            lH.Append( ViewUtils.RarityToColor(player.LeftHand.Rarity) + player.LeftHand.ToString()
                        + ViewUtils.YellowCode).Append(' ').Append(player.LeftHand.Damage);
         }
         else
@@ -143,7 +133,7 @@ public class FrameRenderer(Player player, Map map, List<string> controlsList, Ma
 
         if (player.RightHand != null)
         {
-            rH.Append( ViewUtils.CodeToRarity(player.RightHand.Rarity) + player.RightHand.ToString()
+            rH.Append( ViewUtils.RarityToColor(player.RightHand.Rarity) + player.RightHand.ToString()
                        + ViewUtils.YellowCode).Append(' ').Append(player.RightHand.Damage);
         }
         else
@@ -189,16 +179,51 @@ public class FrameRenderer(Player player, Map map, List<string> controlsList, Ma
         entities.Add(GetSectionBottomLine(sidePanelWidth));
         return entities;
     }
-    public List <string> GetLoggerList()
+    public List<string> GetLoggerList()
     {
-        List <string> log = new List<string>()
-        {
-            GetTopSectionWithTitle("LOGGER",middlePanelWidth)
-        };
+        List<string> log = new List<string>()
+    {
+        GetTopSectionWithTitle("LOGGER", middlePanelWidth)
+    };
+
+        int maxContentWidth = middlePanelWidth - 4;
+
         for (int i = 0; i < 3; i++)
         {
-            log.Add(GetSectionContentLine($"{_logger[i]}", middlePanelWidth));
+            string currentLog = _logger[i];
+
+            if (string.IsNullOrEmpty(currentLog))
+            {
+                log.Add(GetSectionContentLine(string.Empty, middlePanelWidth));
+                continue;
+            }
+
+            string remainingText = currentLog;
+
+            while (remainingText.Length > 0)
+            {
+                if (remainingText.Length <= maxContentWidth)
+                {
+                    log.Add(GetSectionContentLine(remainingText, middlePanelWidth));
+                    break;
+                }
+
+                int breakIndex = remainingText.LastIndexOf(' ', maxContentWidth);
+
+                if (breakIndex == -1)
+                {
+                    breakIndex = maxContentWidth;
+                    log.Add(GetSectionContentLine(remainingText.Substring(0, breakIndex), middlePanelWidth));
+                    remainingText = remainingText.Substring(breakIndex);
+                }
+                else
+                {
+                    log.Add(GetSectionContentLine(remainingText.Substring(0, breakIndex), middlePanelWidth));
+                    remainingText = remainingText.Substring(breakIndex + 1);
+                }
+            }
         }
+
         log.Add(GetSectionBottomLine(middlePanelWidth));
         return log;
     }
@@ -215,14 +240,14 @@ public class FrameRenderer(Player player, Map map, List<string> controlsList, Ma
 
         for (int y = 0; y < map.Height; y++)
         {
-            StringBuilder mapRow = new StringBuilder("\x1b[0m");
+            StringBuilder mapRow = new StringBuilder(ViewUtils.ResetCode);
             for (int x = 0; x < W; x++)
             {
                 var combatantsHere = map.GetCombatantsFromTile(x, y);
                 if (x == player.X && y == player.Y)
                     mapRow.Append('¶');
                 else if (combatantsHere.Count > 0)
-                    mapRow.Append(combatantsHere.First().ColorCode + combatantsHere.First().Symbol + ViewUtils.ResetCode);
+                    mapRow.Append(ViewUtils.TypeToColor(combatantsHere.First().Type) + combatantsHere.First().Symbol + ViewUtils.ResetCode);
                 else mapRow.Append(map[x, y].Symbol);
             }
             mapRow.Append(" \x1b[93m");
@@ -256,12 +281,12 @@ public class FrameRenderer(Player player, Map map, List<string> controlsList, Ma
         string emptyLeftPanelLine = ViewUtils.GenerateStarLine(leftPanelWidth, string.Empty, false,  1);
         string emptyMidPanelLine = ViewUtils.GenerateStarLine(middlePanelWidth, string.Empty, false,  1);
 
-        if (maxRows + _banner.Count < Console.WindowHeight)
+        if (maxRows + TextBanners.MINIDUNGEON.Count < Console.WindowHeight)
         {
             hasBanner = true;
-            for (int i = 0; i < _banner.Count; i++)
+            for (int i = 0; i < TextBanners.MINIDUNGEON.Count; i++)
             {
-                string bannerLine = _banner[i];
+                string bannerLine = TextBanners.MINIDUNGEON[i];
                 Frame.Append(ViewUtils.GenerateStarLine(Console.WindowWidth, bannerLine, false, i + 2137));
                 Frame.AppendLine();
             }
@@ -282,7 +307,7 @@ public class FrameRenderer(Player player, Map map, List<string> controlsList, Ma
             Frame.AppendLine();
         }
 
-        int linesToClear = Console.WindowHeight - maxRows - (hasBanner? _banner.Count : 0) -1;
+        int linesToClear = Console.WindowHeight - maxRows - (hasBanner? TextBanners.MINIDUNGEON.Count : 0) -2;
         if (linesToClear > 0)
         {
             for (int i = 0; i < linesToClear; i++)

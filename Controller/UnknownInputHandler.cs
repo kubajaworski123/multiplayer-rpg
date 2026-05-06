@@ -10,13 +10,12 @@ using MazeGame.Model.Observers;
 
 namespace MazeGame.Controller;
 
-public class UnknownInputHandler(Map map, Player player, LogBus logBus) : InputHandler
+public class UnknownInputHandler(Map map, Player player) : InputHandler
 {
     Map _map = map;
     Player _player = player;
-    LogBus _logbus = logBus;
     public override void Handle(ConsoleKeyInfo keyInfo)
     {
-        _logbus.Publish($"Detected unknown key: {keyInfo.Key}");
+        LogBus.Logs.Publish($"Detected unknown key: {keyInfo.Key}");
     }
 }

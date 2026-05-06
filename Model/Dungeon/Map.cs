@@ -102,5 +102,54 @@ public class Map
             }
         }
     }
+    public void MoveMobs(int playerX, int playerY)
+    {
+        foreach (var combatant in Combatants.ToList())
+        {
+            combatant.Move(this, playerX, playerY);
+        }
+    }
+    public int GetPathDistance(int startX, int startY, int targetX, int targetY)
+    {
+        if (startX == targetX && startY == targetY) return 0;
+
+        bool[,] visited = new bool[Width, Height];
+        Queue<(int x, int y, int dist)> queue = new Queue<(int x, int y, int dist)>();
+
+        queue.Enqueue((startX, startY, 0));
+        visited[startX, startY] = true;
+
+        (int x, int y)[] directions = new (int x, int y)[]
+        {
+            (0, -1), 
+            (0, 1),  
+            (-1, 0), 
+            (1, 0)   
+        };
+
+        while (queue.Count > 0)
+        {
+            var curr = queue.Dequeue();
+
+            if (curr.x == targetX && curr.y == targetY)
+                return curr.dist;
+
+            for (int i = 0; i < 4; i++)
+            {
+                int nextX = curr.x + directions[i].x;
+                int nextY = curr.y + directions[i].y;
+
+                if (nextX >= 0 && nextX < Width && nextY >= 0 && nextY < Height)
+                {
+                    if (!visited[nextX, nextY] && !Tiles[nextX, nextY].IsWall)
+                    {
+                        visited[nextX, nextY] = true;
+                        queue.Enqueue((nextX, nextY, curr.dist + 1));
+                    }
+                }
+            }
+        }
+        return -1;
+    }
 
 }

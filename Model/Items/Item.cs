@@ -14,6 +14,7 @@ public class Item(string name, char symbol) : MapEntity(name, symbol)
     public virtual int Damage => 0;
     public virtual bool IsTwoHanded => false;
     public virtual ItemRarity Rarity { get; set; } = ItemRarity.Common;
+    public override int NoiseRange => 1;
     public virtual void Accept(IAttackVisitor visitor, Item context)
     {
         visitor.Visit(this, context);

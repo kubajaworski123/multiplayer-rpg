@@ -6,6 +6,7 @@ namespace MazeGame.Model.Observers
     public class LogBus : ILogPublisher
     {
         private readonly List<ILogObserver> _observers = new List<ILogObserver>();
+        public static LogBus Logs { get; private set; } = new LogBus();
 
         public void Subscribe(ILogObserver observer)
         {

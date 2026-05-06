@@ -3,6 +3,7 @@ using MazeGame.Model.Characters;
 using MazeGame.Model.Combat;
 using MazeGame.Model.Dungeon;
 using MazeGame.Model.Players;
+using MazeGame.View;
 using MazeGame.View.Renderers;
 using System;
 using System.Collections.Generic;
@@ -40,12 +41,12 @@ namespace MazeGame.Controller.CombatHandlers
                 {
                     if (_session.RightActor.Health <= 0)
                     {
-                        _session.RightActor.SetBanner(CharacterBanners.DeadBanner);
+                        _session.RightActor.SetType(CharacterType.Dead);
                         _map.RemoveCombatant(_session.RightActor);
                     }
                     else if (_session.LeftActor.Health <= 0)
                     {
-                        _session.LeftActor.SetBanner(CharacterBanners.DeadBanner);
+                        _session.LeftActor.SetType(CharacterType.Dead);
                     }
                 }
             }

@@ -12,20 +12,20 @@ namespace MazeGame.View.Renderers
         {
             sb.Clear();
             int h = Console.WindowHeight;
-            sb.AppendLine(ViewUtils.GenerateStarLine(Console.WindowWidth - 2, ViewUtils.YellowCode));
+            sb.AppendLine(ViewUtils.GenerateStarLine(Console.WindowWidth - 1, ViewUtils.YellowCode));
             for(int i = 0; i < h/2 - 1; i++)
             {
                 sb.AppendLine(ViewUtils.GenerateStarLine(Console.WindowWidth - 1, string.Empty));
             }
 
-            sb.AppendLine(ViewUtils.GenerateStarLine(Console.WindowWidth,_msg));
+            sb.AppendLine(ViewUtils.GenerateStarLine(Console.WindowWidth-1,_msg));
 
-            for (int i = 0; i < h / 2 - 1; i++)
+            for (int i = 0; i < h / 2 - 2; i++)
             {
-                sb.AppendLine(ViewUtils.GenerateStarLine(Console.WindowWidth - 2, string.Empty));
+                sb.AppendLine(ViewUtils.GenerateStarLine(Console.WindowWidth - 1, string.Empty));
             }
 
-            sb.AppendLine(ViewUtils.GenerateStarLine(Console.WindowWidth - 1, ViewUtils.ResetCode));
+            sb.Append(ViewUtils.GenerateStarLine(Console.WindowWidth - 1, ViewUtils.ResetCode));
         }
 
         public void Render()

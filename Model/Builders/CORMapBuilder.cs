@@ -1,18 +1,19 @@
 ﻿using MazeGame.Controller;
 using MazeGame.Controller.GameStates;
 using MazeGame.Controller.MainMapHandlers;
+using MazeGame.Model.Characters;
 using MazeGame.Model.Dungeon;
+using MazeGame.Model.Observers;
+using MazeGame.Model.Players;
 using MazeGame.View.Renderers;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using MazeGame.Model.Players;
-using MazeGame.Model.Observers;
 
 namespace MazeGame.Model.Builders;
 
 public class CORMapBuilder(Player player, Map map, FrameRenderer renderer,
-    GameStateManager stateManager, UserManualState manualState, GameOverState gameOverState, AllLogsState allLogsState, LogBus logbus) : IMapBuilder
+    GameStateManager stateManager, UserManualState manualState, GameOverState gameOverState, AllLogsState allLogsState) : IMapBuilder
 {
     private bool _move         = false;
     private bool _exit         = false;
@@ -25,13 +26,12 @@ public class CORMapBuilder(Player player, Map map, FrameRenderer renderer,
     Player _player = player;
     Map _map = map;
     FrameRenderer _renderer = renderer;
-    LogBus _logbus = logbus;
-    public InputHandler? COR { get; private set; } =  new UnknownInputHandler(map,player,logbus);
+    public InputHandler? COR { get; private set; } =  new UnknownInputHandler(map,player);
     public void BuildCentralHall(int width, int height)
     {
         if (!_move && COR != null)
         {
-            var mH = new MovementHandler(player, map, stateManager, logbus);
+            var mH = new MovementHandler(player, map, stateManager);
             mH.SetNextHandler(COR);
             COR = mH;
             _move = true;
@@ -42,7 +42,7 @@ public class CORMapBuilder(Player player, Map map, FrameRenderer renderer,
     {
         if (!_move && COR != null)
         {
-            var mH = new MovementHandler(player, map, stateManager, logbus);
+            var mH = new MovementHandler(player, map, stateManager);
             mH.SetNextHandler(COR);
             COR = mH;
             _move = true;
@@ -53,7 +53,7 @@ public class CORMapBuilder(Player player, Map map, FrameRenderer renderer,
     {
         if (!_move && COR != null)
         {
-            var mH = new MovementHandler(player, map, stateManager, logbus);
+            var mH = new MovementHandler(player, map, stateManager);
             mH.SetNextHandler(COR);
             COR = mH;
             _move = true;
@@ -67,7 +67,7 @@ public class CORMapBuilder(Player player, Map map, FrameRenderer renderer,
         COR = UMH;
         if (!_move && COR != null)
         {
-            var mH = new MovementHandler(player, map, stateManager, logbus);
+            var mH = new MovementHandler(player, map, stateManager);
             mH.SetNextHandler(COR);
             COR = mH;
             _move = true;
@@ -113,7 +113,7 @@ public class CORMapBuilder(Player player, Map map, FrameRenderer renderer,
     {
         if(! _pickup && COR != null)
         {
-            var pH = new PickupHandler(player, map, logbus);
+            var pH = new PickupHandler(player, map);
             pH.SetNextHandler(COR);
             COR = pH;
             _pickup = true;
@@ -131,14 +131,14 @@ public class CORMapBuilder(Player player, Map map, FrameRenderer renderer,
     {
         if (!_pickup && COR != null)
         {
-            var pH = new PickupHandler(player, map, logbus);
+            var pH = new PickupHandler(player, map);
             pH.SetNextHandler(COR);
             COR = pH;
             _pickup = true;
         }
         if(! _equip  && COR != null)
         {
-            var eqH = new EquipHandler(player,map,logbus);
+            var eqH = new EquipHandler(player,map);
             eqH.SetNextHandler(COR);
             COR = eqH;
             _equip = true;
@@ -153,6 +153,7 @@ public class CORMapBuilder(Player player, Map map, FrameRenderer renderer,
     }
     public void AddMobs(int count){}
     public void AddArtifact() {}
+    public void AddMobGroup(Func<Mob> mobFactory, int count) { }
     public InputHandler? GetCOR()
     {
         return COR;

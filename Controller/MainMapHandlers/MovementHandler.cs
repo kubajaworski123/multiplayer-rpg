@@ -11,12 +11,11 @@ using System;
 
 namespace MazeGame.Controller.MainMapHandlers;
 
-public class MovementHandler(Player player, Map map, GameStateManager manager, LogBus logbus) : InputHandler
+public class MovementHandler(Player player, Map map, GameStateManager manager) : InputHandler
 {
     private readonly Player _player = player;
     private readonly Map _map = map;
     private readonly GameStateManager _stateManager = manager;
-    private readonly LogBus _logbus = logbus;
     public override void Handle(ConsoleKeyInfo keyInfo)
     {
         var (dx, dy, isMovementKey) = keyInfo.Key switch
@@ -38,6 +37,7 @@ public class MovementHandler(Player player, Map map, GameStateManager manager, L
                 _player.X = newX;
                 _player.Y = newY;
                 var combatants = _map.GetCombatantsFromTile(newX, newY);
+
                 if (combatants.Count > 0)
                 {
                     var enemy = combatants[0];
@@ -47,7 +47,7 @@ public class MovementHandler(Player player, Map map, GameStateManager manager, L
                         new StealthAttackVisitor(_player),
                         new MagicAttackVisitor(_player)
                     };
-                    var combatSession = new CombatSession(_player, enemy, attacks, _logbus);
+                    var combatSession = new CombatSession(_player, enemy, attacks);
                     var combatRenderer = new CombatRenderer(_player, enemy, combatSession);
 
                     var switchHandler = new SwitchAttackHandler(combatSession);
@@ -58,6 +58,11 @@ public class MovementHandler(Player player, Map map, GameStateManager manager, L
 
                     _stateManager.PushState(combatState);
                 }
+                else
+                {
+                    _map.MoveMobs(_player.X, _player.Y);
+                }
+
             }
         }
         else
@@ -75,7 +80,7 @@ public class MovementHandler(Player player, Map map, GameStateManager manager, L
 
         if (_map.Tiles[x, y].IsWall)
         {
-            _logbus.Publish($"{_player.Name} cant move to ({x}, {y})");
+            LogBus.Logs.Publish($"{_player.Name} cant move to ({x}, {y})");
             return false;
         }
         return true;

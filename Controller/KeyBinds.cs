@@ -13,5 +13,6 @@ namespace MazeGame.Controller
         public static ConsoleKey BackwardKey = ConsoleKey.S;
         public static ConsoleKey RightKey = ConsoleKey.D;
         public static ConsoleKey LeftKey = ConsoleKey.A;
+        public static ConsoleKey LogsKey = ConsoleKey.L;
     }
 }

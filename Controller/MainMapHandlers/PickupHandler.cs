@@ -8,14 +8,14 @@ using MazeGame.Model.MapEntities;
 using MazeGame.Model.Players;
 using MazeGame.View;
 using MazeGame.Model.Observers;
+using MazeGame.Model.SoundPropagation;
 
 namespace MazeGame.Controller.MainMapHandlers;
 
-public class PickupHandler(Player player, Map map, LogBus logBus) : InputHandler
+public class PickupHandler(Player player, Map map) : InputHandler
 {
     private readonly Player _player = player;
     private readonly Map _map = map;
-    private readonly LogBus _logBus = logBus;
     public static ConsoleKey PickupKey = ConsoleKey.E;
     public override void Handle(ConsoleKeyInfo keyInfo)
     {
@@ -27,11 +27,16 @@ public class PickupHandler(Player player, Map map, LogBus logBus) : InputHandler
                 bool picked = item.PickUp(_player);
                 if (picked)
                 {
-                    _logBus.Publish($"{_player.Name} picks {item.Name}");
+                    LogBus.Logs.Publish($"Picked {item.Name}");
+                    if(item.NoiseRange > 0)
+                    {
+                        SoundData soundData = new SoundData(_player.X, _player.Y, item.NoiseRange, _map, $"pickup");
+                        SoundPublisher.Instance.Publish(soundData);
+                    }
                     _map[_player.X, _player.Y].RemoveMapEntity(item);
                 }
                 else
-                    _logBus.Publish($"{_player.Name} cant pick {item.Name}");
+                    LogBus.Logs.Publish($"{_player.Name} cant pick {item.Name}");
             }
         }
         else

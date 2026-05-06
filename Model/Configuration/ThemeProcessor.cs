@@ -7,7 +7,8 @@ namespace MazeGame.Model.Configuration
 {
     public static class ThemeProcessor
     {
-        private static readonly Dictionary<string, Func<IDungeonThemeFactory>> Themes = new Dictionary<string, Func<IDungeonThemeFactory>>()
+        private static readonly Dictionary<string, Func<IDungeonThemeFactory>> Themes = 
+                            new Dictionary<string, Func<IDungeonThemeFactory>>()
         {
             { "Surface", () => new SurfaceTheme() },
             { "SithRuins", () => new SithRuinsTheme() },

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MazeGame.Model.Characters
+namespace MazeGame.View
 {
     internal static class CharacterBanners
     {

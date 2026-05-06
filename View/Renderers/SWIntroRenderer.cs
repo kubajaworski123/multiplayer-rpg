@@ -1,4 +1,5 @@
-﻿using MazeGame.View.Renderers;
+﻿using MazeGame.View;
+using MazeGame.View.Renderers;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -32,38 +33,13 @@ public class SWIntroRenderer(List <string> subs) : IRenderer
         {
             canvas.Add(ViewUtils.GenerateStarLine(drawWidth, string.Empty));
         }
-        List<string> banner = new List<string>()
-        {
-            ".      .     T h i s   i s   t h e   g a l a x y   o f   . . .             .",
-            ".        .               .       .     .            .",
-            "   .           .        .                     .        .            .",
-            "             .               .    .          .              .   .         .",
-            "               _________________      ____         __________",
-            " .       .    /                 |    /    \\    .  |          \\",
-            "     .       /    ______   _____| . /      \\      |    ___    |     .     .",
-            "             \\    \\    |   |       /   /\\   \\     |   |___>   |",
-            "           .  \\    \\   |   |      /   /__\\   \\  . |         _/               .",
-            " .     ________>    |  |   | .   /            \\   |   |\\    \\_______    .",
-            "      |            /   |   |    /    ______    \\  |   | \\           |",
-            "      |___________/    |___|   /____/      \\____\\ |___|  \\__________|    .",
-            "  .     ____    __  . _____   ____      .  __________   .  _________",
-            "       \\    \\  /  \\  /    /  /    \\       |          \\    /         |      .",
-            "        \\    \\/    \\/    /  /      \\      |    ___    |  /    ______|  .",
-            "         \\              /  /   /\\   \\ .   |   |___>   |  \\    \\",
-            "   .      \\            /  /   /__\\   \\    |         _/.   \\    \\            +",
-            "           \\    /\\    /  /            \\   |   |\\    \\______>    |   .",
-            "            \\  /  \\  /  /    ______    \\  |   | \\              /          .",
-            " .       .   \\/    \\/  /____/      \\____\\ |___|  \\____________/  LS",
-            "                               .                                        .",
-            "     .                           .         .               .                 ."
-        };
 
         int maxBannerWidth = 0;
-        foreach (var b in banner)
+        foreach (var b in TextBanners.INTRO )
         {
             if (b.Length > maxBannerWidth) maxBannerWidth = b.Length;
         }
-        foreach (var line in banner)
+        foreach (var line in TextBanners.INTRO )
         {
             string padded = line.PadRight(maxBannerWidth);
             canvas.Add(ViewUtils.GenerateStarLine(drawWidth, padded));

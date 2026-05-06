@@ -9,6 +9,7 @@ namespace MazeGame.Model.Items.ItemDecorators
         protected Item _decoratedItem;
         public override ItemRarity Rarity => _decoratedItem.Rarity;
         public override bool IsTwoHanded => _decoratedItem.IsTwoHanded;
+        public override int NoiseRange => _decoratedItem.NoiseRange;
         public ItemDecorator(Item decoratedItem) : base(decoratedItem.Name, decoratedItem.Symbol)
         {
             _decoratedItem = decoratedItem;

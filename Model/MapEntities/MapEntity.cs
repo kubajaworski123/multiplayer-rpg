@@ -9,5 +9,6 @@ public abstract class MapEntity(string name, char symbol)
     public char Symbol { get; protected set; } = symbol;
 
     public abstract bool PickUp(Player player);
+    public virtual int NoiseRange => 0;
 
 }

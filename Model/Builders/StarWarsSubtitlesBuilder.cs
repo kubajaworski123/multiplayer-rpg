@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MazeGame.Model.Characters;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -65,5 +66,6 @@ namespace MazeGame.Model.Builders
             return _manual;
         }
         public void AddArtifact() { }
+        public void AddMobGroup(Func<Mob> mobFactory, int count) { }
     }
 }

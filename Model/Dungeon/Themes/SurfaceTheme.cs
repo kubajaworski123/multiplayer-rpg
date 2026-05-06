@@ -2,6 +2,7 @@
 using MazeGame.Model.Characters;
 using MazeGame.Model.Items;
 using MazeGame.Model.Weapons;
+using MazeGame.View;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -26,10 +27,6 @@ namespace MazeGame.Model.Dungeon.Themes
             () => new HeavyWeapon("Tree Branch", 'B', 8, true),
             () => new HeavyWeapon("Tribal Mace", 'S', 14, false),
         };
-        private readonly List<Func<Mob>> _baseMobs = new List<Func<Mob>>()
-        {
-            () => new Mob("Imperial War Machine", '!', 100, 1, 1, CharacterBanners.ATSTBanner, 10, 5),
-        };
         public string WelcomeMessage => "YOU ARE ON THE SURFACE OF MINI!";
 
         public Item GetArtifact()
@@ -53,11 +50,7 @@ namespace MazeGame.Model.Dungeon.Themes
             return ItemFactory.ApplyRandomModifiers(freshWeapon);
         }
 
-        public Mob GetRandomMob()
-        {
-            int index = _random.Next(_baseMobs.Count);
-            return _baseMobs[index]();
-        }
+
 
         public void ApplyToBuilder(IMapBuilder builder)
         {
@@ -68,6 +61,11 @@ namespace MazeGame.Model.Dungeon.Themes
             builder.AddWeapons(10);
             builder.AddMobs(4);
             builder.AddArtifact();
+            MobGroup humans = new MobGroup();
+            MobGroup machines = new MobGroup();
+            builder.AddMobGroup(() => new HumanMob(1, 1, humans, "Surface Explorer", '!', 100, CharacterType.BountyHunter, 5, 2), 2);
+            builder.AddMobGroup(() => new MachineMob(1, 1, machines, "Imperial War Machine", '!', 100, CharacterType.Machine, 4, 3), 2);
+            builder.AddMobGroup(() => new MachineMob(1, 1, machines, "Droid Soldier", '!', 100, CharacterType.Droid, 5, 2), 2);
         }
     }
 }

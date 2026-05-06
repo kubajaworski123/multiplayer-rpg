@@ -27,7 +27,7 @@ namespace MazeGame
             Config config = ConfigLoader.LoadConfig();
 
             Player player = SetupPlayer();
-            player.setName(config.PlayerName);
+            player.SetName(config.PlayerName);
 
             string timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
             string logFileName = $"{config.PlayerName}_{timestamp}.txt";
@@ -66,7 +66,7 @@ namespace MazeGame
         private Player SetupPlayer()
         {
             Player player = new Player();
-            player.SetBanner(CharacterBanners.PlayerBanner);
+            player.SetType(CharacterType.Player);
             return player;
         }
 
@@ -75,12 +75,6 @@ namespace MazeGame
             var mainScreenRenderer = new WelcomeScreenRenderer();
             mainScreenRenderer.Prepare();
             mainScreenRenderer.Render();
-        }
-
-        private int ShowMapMenu()
-        {
-            var mapMenu = new MapMenu();
-            return mapMenu.DisplayMenuFrame();
         }
 
         private void ShowIntro(LevelData level)
@@ -97,15 +91,13 @@ namespace MazeGame
         {
             var stateManager = new GameStateManager();
 
-            var logBus = new LogBus();
-
             var fileLogger = new FileLoggerObserver(logPath);
             var mapViewLogger = new MapViewLogger();
             var allLogger = new AllLogsObserver();
                 
-            logBus.Subscribe(fileLogger);
-            logBus.Subscribe(mapViewLogger);
-            logBus.Subscribe(allLogger);
+            LogBus.Logs.Subscribe(fileLogger);
+            LogBus.Logs.Subscribe(mapViewLogger);
+            LogBus.Logs.Subscribe(allLogger);
 
             var renderer = new FrameRenderer(player, level.Map, level.Controls, mapViewLogger);
 
@@ -132,7 +124,7 @@ namespace MazeGame
             var scrollLogs = new ScrollAllLogsHandler(allLogsRenderer);
             exitAllLogs.SetNextHandler(scrollLogs);
 
-            var corBuilder = new CORMapBuilder(player, level.Map, renderer, stateManager, manualState, gameOverState, allLoggerState, logBus);
+            var corBuilder = new CORMapBuilder(player, level.Map, renderer, stateManager, manualState, gameOverState, allLoggerState);
             theme.ApplyToBuilder(corBuilder);
             var mapInputChain = corBuilder.GetCOR();
 

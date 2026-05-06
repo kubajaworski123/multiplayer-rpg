@@ -1,4 +1,6 @@
-﻿using MazeGame.Model.Items;
+﻿using MazeGame.Model.Characters;
+using MazeGame.Model.Items;
+using MazeGame.View;
 using System;
 using System.Threading;
 
@@ -47,8 +49,8 @@ public static class ViewUtils
     public static string RedCode { get; } = "\x1b[31m";
     public static string BlueCode { get; } = "\x1b[34m";
     public static string GreenCode { get; } = "\x1b[32m";
-
-    public static string CodeToRarity(ItemRarity rarity)
+    public static string PurpleCode { get; } = "\x1b[35m";
+    public static string RarityToColor(ItemRarity rarity)
     {
         return rarity switch
         {
@@ -57,6 +59,29 @@ public static class ViewUtils
             ItemRarity.Legendary => RedCode,
             ItemRarity.Artifact => GreenCode,
             _ => YellowCode
+        };
+    }
+    public static List<string> TypeToBanner(CharacterType bannerType)
+    {
+        return bannerType switch
+        {
+            CharacterType.Machine => CharacterBanners.ATSTBanner,
+            CharacterType.Droid => CharacterBanners.DroidBanner,
+            CharacterType.Player => CharacterBanners.PlayerBanner,
+            CharacterType.BountyHunter => CharacterBanners.BountyHunterBanner,
+            CharacterType.Dead => CharacterBanners.DeadBanner,
+            _ => CharacterBanners.PlayerBanner
+        };
+    }
+    public static string TypeToColor(CharacterType type)
+    {
+        return type switch
+        {
+            CharacterType.Machine => BlueCode,
+            CharacterType.Droid => PurpleCode,
+            CharacterType.Player => YellowCode,
+            CharacterType.BountyHunter => GreenCode,
+            _ => ResetCode
         };
     }
 

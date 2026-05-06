@@ -1,7 +1,9 @@
 ﻿using MazeGame.Controller;
+using MazeGame.Model.Characters;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Reflection.Metadata;
 using System.Text;
 
 namespace MazeGame.Model.Builders
@@ -69,6 +71,13 @@ namespace MazeGame.Model.Builders
             "Chosen attack determines your defence for the opponents turn. Your performance depends on players abilities as well.",
             "If your health drops to 0, you die and the game is over. If you kill a mob, it is removed from the game."
         };
+        private bool _logs = false;
+        private List<string> _logsStrings = new List<string>()
+        {
+            "LOGS",
+            $"To view all logs, press {KeyBinds.LogsKey} key.",
+            $"Logs are a record of all your actions and their outcomes. They are useful for tracking your progress."
+        };
         public void BuildCentralHall(int width, int height)
         {
             if (!_move)
@@ -113,6 +122,11 @@ namespace MazeGame.Model.Builders
                 _general = true;
                 _help.AddRange(_generalStrings);
             }
+            if (!_logs)
+            {
+                _logs = true;
+                _help.AddRange(_logsStrings);
+            }
         }
 
         public void BuildFilledDungeon(int width, int height)
@@ -126,6 +140,11 @@ namespace MazeGame.Model.Builders
             {
                 _general = true;
                 _help.AddRange(_generalStrings);
+            }
+            if (!_logs)
+            {
+                    _logs = true;
+                    _help.AddRange(_logsStrings);
             }
 
         }
@@ -170,6 +189,7 @@ namespace MazeGame.Model.Builders
             }
         }
         public void AddArtifact() { }
+        public void AddMobGroup(Func<Mob> mobFactory, int count) { }
         public List<string> GetUsersManual()
         {
             return _help;

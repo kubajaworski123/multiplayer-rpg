@@ -12,47 +12,18 @@ namespace MazeGame.View.Renderers
     {
         private ICombat _leftActor = leftActor;
         private ICombat _rightActor = rightActor;
-        //private int HighlightedAttack = 0;
+        private List<string> _leftBanner = ViewUtils.TypeToBanner(leftActor.Type);
+        private List<string> _rightBanner = ViewUtils.TypeToBanner(rightActor.Type);
         StringBuilder sb = new StringBuilder();
         CombatSession _session = session;
-        private List<string> VSbanner = new List<string>()
-        {
-            "██    ██ ███████", 
-            "██    ██ ██     ", 
-            "██    ██ ███████", 
-            " ██  ██       ██", 
-            "  ████   ███████"
-        };
-        private List<string> YOUbanner = new List<string>()
-        {
-            "██  ██ ▄████▄ ██  ██ ",
-            " ▀██▀  ██  ██ ██  ██ ",
-            "  ██   ▀████▀ ▀████▀ "   
-        };
-        private List<string> WINbanner = new List<string>()
-        {   
-            "██     ██ ██ ███  ██ ",
-            "██ ▄█▄ ██ ██ ██ ▀▄██ ",
-            " ▀██▀██▀  ██ ██   ██ "
-        };
-        private List<string> LOSEbanner = new List<string>()
-        {
-                                              
-            "██     ▄████▄ ▄█████ ██████", 
-            "██     ██  ██ ▀▀▀▄▄▄ ██▄▄  ", 
-            "██████ ▀████▀ █████▀ ██▄▄▄▄"
-                                           
-        };
         private List<string> CalculateLeftPanel()
         {
-            if(_leftActor.Banner == null)
-                return new List<string>();
             List<string> leftPanel = new List<string>();
-            int portraitWidth = _leftActor.Banner[0].Length;
+            int portraitWidth = _leftBanner[0].Length;
 
             leftPanel.Add(string.Empty);
             leftPanel.Add(_leftActor.Name.ToUpper());
-            leftPanel.AddRange(_leftActor.Banner);
+            leftPanel.AddRange(_leftBanner);
             int hpFilledBoxes = _leftActor.Health * (portraitWidth - "HP:".Length) / 100;
             string hpBar = "HP:" + ViewUtils.RedCode + new string('█', hpFilledBoxes) +
                            new string(' ', portraitWidth - hpFilledBoxes - "HP:".Length) + ViewUtils.ResetCode;
@@ -62,14 +33,12 @@ namespace MazeGame.View.Renderers
         }
         private List<string> CalculateRightPanel()
         {
-            if (_rightActor.Banner == null)
-                return new List<string>();
             List<string> rightPanel = new List<string>();
-            int portraitWidth = _rightActor.Banner[0].Length;
+            int portraitWidth = _rightBanner[0].Length;
 
             rightPanel.Add(string.Empty);
             rightPanel.Add(_rightActor.Name.ToUpper());
-            rightPanel.AddRange(_rightActor.Banner);
+            rightPanel.AddRange(_rightBanner);
 
             int hpFilledBoxes = _rightActor.Health * (portraitWidth - "HP:".Length) / 100;
             string hpBar = "HP:" + ViewUtils.RedCode + new string('█', hpFilledBoxes) +
@@ -85,9 +54,9 @@ namespace MazeGame.View.Renderers
 
             if (_leftActor.Health <= 0)
             {
-                middlePanel.AddRange(YOUbanner);
+                middlePanel.AddRange(TextBanners.YOU);
                 middlePanel.Add(string.Empty);
-                middlePanel.AddRange(LOSEbanner);
+                middlePanel.AddRange(TextBanners.LOSE);
                 middlePanel.Add(string.Empty);
                 middlePanel.Add(string.Empty);
                 middlePanel.Add("PRESS ANY KEY");
@@ -96,9 +65,9 @@ namespace MazeGame.View.Renderers
             }
             else if (_rightActor.Health <= 0)
             {
-                middlePanel.AddRange(YOUbanner);
+                middlePanel.AddRange(TextBanners.YOU);
                 middlePanel.Add(string.Empty);
-                middlePanel.AddRange(WINbanner);
+                middlePanel.AddRange(TextBanners.WIN);
                 middlePanel.Add(string.Empty);
                 middlePanel.Add(string.Empty);
                 middlePanel.Add("PRESS ANY KEY");
@@ -106,7 +75,7 @@ namespace MazeGame.View.Renderers
             }
             else
             {
-                middlePanel.AddRange(VSbanner);
+                middlePanel.AddRange(TextBanners.VS);
                 middlePanel.Add(string.Empty);
                 foreach (var attack in _session.PossibleAttacks)
                 {
@@ -137,11 +106,10 @@ namespace MazeGame.View.Renderers
                     : ViewUtils.GenerateStarLine(portraitPanelWidth, string.Empty, false, y+200);
 
                 string middleLine = y < middlePanel.Count ?
-                    ViewUtils.GenerateStarLine(middlePanelWidth, middlePanel[y], (_session.ActiveCombat && y == 2+VSbanner.Count+_session.HighlightedAttackOtption) ? true:false) 
+                    ViewUtils.GenerateStarLine(middlePanelWidth, middlePanel[y], (_session.ActiveCombat && y == 2+TextBanners.VS.Count+_session.HighlightedAttackOtption) ? true:false) 
                     : ViewUtils.GenerateStarLine(middlePanelWidth, string.Empty, false, y+400);
 
                 sb.Append(leftLine.VisiblePadRight(portraitPanelWidth));
-                //sb.Append(new string(' ', middlePanelWidth));
                 sb.Append(middleLine.VisiblePadRight(middlePanelWidth));
                 sb.Append(rightLine.VisiblePadRight(portraitPanelWidth));
                 sb.AppendLine();
@@ -154,7 +122,6 @@ namespace MazeGame.View.Renderers
 
         public void Render()
         {
-            //Console.Clear();
             Console.SetCursorPosition(0, 0);
             Console.Write(sb.ToString());
             Console.ResetColor();

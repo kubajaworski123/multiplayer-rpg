@@ -259,16 +259,16 @@ public class ConcreteMapBuilder(IDungeonThemeFactory theme) : IMapBuilder
     }
     public void AddMobs(int count)
     {
-        var nonWall = _map.GetNonWallPositions();
-        int nonWallN = nonWall.Count;
-        for (int i = 0; i < count; i++)
-        {
-            int rTile = _random.Next(0, nonWallN);
-            (int x, int y) = nonWall[rTile];
-            Mob mob = _theme.GetRandomMob();
-            mob.Move(x, y);
-            _map.AddCombatant(mob);
-        }
+        //var nonWall = _map.GetNonWallPositions();
+        //int nonWallN = nonWall.Count;
+        //for (int i = 0; i < count; i++)
+        //{
+        //    int rTile = _random.Next(0, nonWallN);
+        //    (int x, int y) = nonWall[rTile];
+        //    Mob mob = _theme.GetRandomMob();
+        //    mob.Move(x, y);
+        //    _map.AddCombatant(mob);
+        //}
     }
     public void AddArtifact()
     {
@@ -311,6 +311,21 @@ public class ConcreteMapBuilder(IDungeonThemeFactory theme) : IMapBuilder
                 _map[x, startY].Dig();
                 _map[x, startY].SetAsChamber();
             }
+        }
+    }
+    public void AddMobGroup(Func<Mob> mobCreationDelegate, int count)
+    {
+        var nonWall = _map.GetNonWallPositions();
+        int nonWallN = nonWall.Count;
+        if (nonWallN == 0) return;
+
+        for (int i = 0; i < count; i++)
+        {
+            int rTile = _random.Next(0, nonWallN);
+            (int x, int y) = nonWall[rTile];
+            Mob mob = mobCreationDelegate();
+            mob.Move(x, y);
+            _map.AddCombatant(mob);
         }
     }
 

@@ -4,14 +4,13 @@ using System.Text;
 
 namespace MazeGame.Model.Characters
 {
-    public abstract class Character(string name = "unknown", char symbol = '!', int health = 100, int x = 1, int y = 1, 
-                                    List<string>? banner = null)
+    public abstract class Character(string name = "unknown", char symbol = '!', int health = 100,
+                                    CharacterType type = CharacterType.BountyHunter, int x = 1, int y = 1)
     {
         public string Name { get; protected set; } = name;
         public char Symbol { get; protected set; } = symbol;
         public int Health { get; protected set; } = health;
-        public List<string>? Banner { get; protected set; } = banner;
-        public virtual string ColorCode => "\x1b[37m";
+        public virtual CharacterType Type { get; protected set; } = type;
         public int X { get;  set; } = x;
         public int Y { get;  set; } = y;
         public void ModifyHealth(int amount)
@@ -19,9 +18,9 @@ namespace MazeGame.Model.Characters
             Health += amount;
             if (Health < 0) Health = 0;
         }
-        public void SetBanner(List<string> newBanner)
+        public void SetType(CharacterType type)
         {
-            Banner = newBanner;
+            Type = type;
         }
         public void Move(int x, int y)
         {

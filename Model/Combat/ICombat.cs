@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MazeGame.Model.Characters;
+using MazeGame.Model.Dungeon;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -8,13 +10,13 @@ namespace MazeGame.Model.Combat
     {
         int Health { get; }
         string Name { get; }
-        List<string> Banner { get; }
+        CharacterType Type { get; }
         int X { get; }
         int Y { get; }
         char Symbol { get; }
-        string ColorCode { get; }
         void ReciveDamage(int damage);
         void Attack(ICombat enemy);
-        void SetBanner(List<string> newBanner);
+        void SetType(CharacterType type);
+        void Move(Map map, int x, int y);
     }
 }

@@ -6,25 +6,16 @@ namespace MazeGame.View.Renderers
 {
     internal class GameOverRenderer : IRenderer
     {
-        private readonly List<string> _banner = new List<string>()
-        {
-            " ██████   █████  ███    ███ ███████      ██████  ██    ██ ███████ ██████ ", 
-            "██       ██   ██ ████  ████ ██          ██    ██ ██    ██ ██      ██   ██", 
-            "██   ███ ███████ ██ ████ ██ █████       ██    ██ ██    ██ █████   ██████ ", 
-            "██    ██ ██   ██ ██  ██  ██ ██          ██    ██  ██  ██  ██      ██   ██", 
-            " ██████  ██   ██ ██      ██ ███████      ██████    ████   ███████ ██   ██",
-             "PRESS ANY KEY TO EXIT"
-        };
         private StringBuilder sb = new StringBuilder();
         public void Prepare()
         {
             sb.Clear();
             sb.AppendLine(ViewUtils.GenerateStarLine(Console.WindowWidth, "\x1b[93m"));
-            foreach (var line in _banner)
+            foreach (var line in TextBanners.GAMEOVER)
             {
                 sb.AppendLine(ViewUtils.GenerateStarLine(Console.WindowWidth, line));
             }
-            for (int i = _banner.Count + 2; i < Console.WindowHeight; i++) 
+            for (int i = TextBanners.GAMEOVER.Count + 2; i < Console.WindowHeight; i++) 
             {
                 sb.AppendLine(ViewUtils.GenerateStarLine(Console.WindowWidth, string.Empty));
             }
