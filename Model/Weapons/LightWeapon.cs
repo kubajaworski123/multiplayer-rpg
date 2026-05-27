@@ -7,6 +7,8 @@ namespace MazeGame.Model.Weapons
 {
     public class LightWeapon(string name, char symbol, int damage, bool isTwoHanded) : Weapon(name, symbol, damage, isTwoHanded)
     {
+        public override string Kind => "LightWeapon";
+
         public override void Accept(Combat.IAttackVisitor visitor, Item context)
         {
             visitor.Visit(this, context);

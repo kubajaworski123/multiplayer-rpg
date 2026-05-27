@@ -12,5 +12,4 @@ public class UserManualState(IRenderer renderer, InputHandler? handler) : GameSt
     {
         Render();
     }
-    public override void Exit(){}
 }

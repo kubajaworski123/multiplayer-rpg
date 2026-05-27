@@ -1,4 +1,5 @@
-﻿using MazeGame.Model.Players;
+﻿using MazeGame.Model.Items;
+using MazeGame.Model.Players;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,4 +12,8 @@ public abstract class MapEntity(string name, char symbol)
     public abstract bool PickUp(Player player);
     public virtual int NoiseRange => 0;
 
+    public virtual IEnumerable<Item> GetItemsOnTile()
+    {
+        yield break;
+    }
 }

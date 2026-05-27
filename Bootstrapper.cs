@@ -1,4 +1,4 @@
-﻿using MazeGame.Controller;
+using MazeGame.Controller;
 using MazeGame.Controller.AllLogsHandlers;
 using MazeGame.Controller.GameStates;
 using MazeGame.Controller.MainMapHandlers;
@@ -124,7 +124,7 @@ namespace MazeGame
             var scrollLogs = new ScrollAllLogsHandler(allLogsRenderer);
             exitAllLogs.SetNextHandler(scrollLogs);
 
-            var corBuilder = new CORMapBuilder(player, level.Map, renderer, stateManager, manualState, gameOverState, allLoggerState);
+            var corBuilder = new Controller.Builders.MapInputChainBuilder(player, level.Map, renderer, stateManager, manualState, gameOverState, allLoggerState);
             theme.ApplyToBuilder(corBuilder);
             var mapInputChain = corBuilder.GetCOR();
 

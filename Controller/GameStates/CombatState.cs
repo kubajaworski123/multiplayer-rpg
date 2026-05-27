@@ -9,9 +9,7 @@ namespace MazeGame.Controller.GameStates
     {
         public override void Enter()
         {
-            Console.Clear();
             Render();
         }
-        public override void Exit() {}
     }
 }

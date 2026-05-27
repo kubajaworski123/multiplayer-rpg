@@ -1,5 +1,3 @@
-﻿using MazeGame.Controller;
-using MazeGame.Controller.MainMapHandlers;
 using MazeGame.Model.Characters;
 using System;
 using System.Collections.Generic;
@@ -11,12 +9,12 @@ namespace MazeGame.Model.Builders;
 public class ControlsListBuilder: IMapBuilder
 {
     public static readonly string moveControl = "WSAD: MOVE";
-    public static readonly string pickupControl = $"{KeyBinds.PickupKey}: PICK UP";
+    public static readonly string pickupControl = "E: PICK UP";
     public static readonly string dropControl = "ALT+0-9: DROP";
     public static readonly string equipControl = "0-9: EQUIP";
-    public static readonly string exitControl = $"{KeyBinds.ExitKey}: EXIT";
-    public static readonly string helpControl = $"{KeyBinds.HelpKey}: HELP";
-    public static readonly string logsControl = $"{KeyBinds.LogsKey}: LOGS";
+    public static readonly string exitControl = "Escape: EXIT";
+    public static readonly string helpControl = "H: HELP";
+    public static readonly string logsControl = "L: LOGS";
     public List<string> Controls {get; private set;} = new List<string>();
     
     public void BuildFilledDungeon(int width, int height) 

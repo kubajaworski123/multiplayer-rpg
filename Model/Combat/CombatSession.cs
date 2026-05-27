@@ -1,4 +1,3 @@
-﻿using MazeGame.Controller;
 using MazeGame.Model.Characters;
 using MazeGame.Model.Observers;
 using MazeGame.Model.Players;
@@ -8,11 +7,13 @@ using System.Text;
 
 namespace MazeGame.Model.Combat
 {
-    public class CombatSession(ICombat leftActor, ICombat rightActor, List<IAttackVisitor> attacks)
+    public class CombatSession(ICombat leftActor, ICombat rightActor, List<IAttackVisitor> attacks, LogBus? logs = null)
     {
+        private readonly LogBus _logs = logs ?? LogBus.Logs;
         public ICombat LeftActor { get; private set; } = leftActor;
         public ICombat RightActor  { get; private set; }  = rightActor;
         public bool Turn { get; private set; } = true;
+        public CombatOutcome Outcome => !ActiveCombat ? (LeftActor.Health > 0 ? CombatOutcome.LeftWon : CombatOutcome.RightWon) : CombatOutcome.InProgress;
         public bool ActiveCombat { get; private set; } = true;
         public int HighlightedAttackOtption { get; private set; } = 0;
         public List<IAttackVisitor> PossibleAttacks { get; private set; } = attacks;
@@ -26,10 +27,10 @@ namespace MazeGame.Model.Combat
             int hpBefore = RightActor.Health;
             LeftActor.Attack(RightActor);
             int damageDealt = hpBefore - RightActor.Health;
-            LogBus.Logs.Publish($"{LeftActor.Name} attacks {RightActor.Name} for {damageDealt} dmg");
+            _logs.Publish($"{LeftActor.Name} attacks {RightActor.Name} for {damageDealt} dmg");
             if (RightActor.Health <= 0)
             {
-                LogBus.Logs.Publish($"{RightActor.Name} is defeated");
+                _logs.Publish($"{RightActor.Name} is defeated");
                 ActiveCombat = false;
             }
             else
@@ -46,10 +47,10 @@ namespace MazeGame.Model.Combat
             int hpBefore = LeftActor.Health;
             RightActor.Attack(LeftActor);
             int damageDealt = hpBefore - LeftActor.Health;
-            LogBus.Logs.Publish($"{RightActor.Name} attacks {LeftActor.Name} for {damageDealt} dmg");
+            _logs.Publish($"{RightActor.Name} attacks {LeftActor.Name} for {damageDealt} dmg");
             if (LeftActor.Health <= 0)
             {
-                LogBus.Logs.Publish($"{RightActor.Name} is defeated");
+                _logs.Publish($"{RightActor.Name} is defeated");
                 ActiveCombat = false;   
             }
             else

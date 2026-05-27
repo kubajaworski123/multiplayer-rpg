@@ -1,8 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using MazeGame.Model.Dungeon;
-using MazeGame.View;
 using MazeGame.Model.Combat;
 using MazeGame.Model.MapEntities;
 using MazeGame.Model.Players;
@@ -11,10 +10,20 @@ namespace MazeGame.Model.Items;
 
 public class Item(string name, char symbol) : MapEntity(name, symbol)
 {
+    public virtual string Kind => "Item";
     public virtual int Damage => 0;
     public virtual bool IsTwoHanded => false;
     public virtual ItemRarity Rarity { get; set; } = ItemRarity.Common;
     public override int NoiseRange => 1;
+
+    public override IEnumerable<Item> GetItemsOnTile()
+    {
+        yield return this;
+    }
+
+    public virtual void CollectModifierTags(List<string> tags)
+    {
+    }
     public virtual void Accept(IAttackVisitor visitor, Item context)
     {
         visitor.Visit(this, context);

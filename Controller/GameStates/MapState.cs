@@ -10,9 +10,6 @@ public class MapState(IRenderer renderer, InputHandler? inputHandler) : GameStat
 {
     public override void Enter()
     {
-        Console.Clear();
         Render();
     }
-    public override void Exit(){}
-
 }

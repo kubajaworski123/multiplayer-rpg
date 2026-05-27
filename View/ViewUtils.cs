@@ -1,7 +1,8 @@
-﻿using MazeGame.Model.Characters;
+using MazeGame.Model.Characters;
 using MazeGame.Model.Items;
 using MazeGame.View;
 using System;
+using System.Text;
 using System.Threading;
 
 public static class ViewUtils
@@ -102,16 +103,15 @@ public static class ViewUtils
 
     public static string GenerateStarLine(int width, string text, bool highlightText = false, int? seed = null)
     {
-        Random _random = seed.HasValue ? new Random(seed.Value) : new Random();
         char[] lineChars = new char[width];
         Array.Fill(lineChars, ' ');
 
+        int lineSeed = seed ?? HashCode.Combine(width, text);
+        var random = new Random(lineSeed);
         for (int i = 0; i < width; i++)
         {
-            if (_random.NextDouble() < 0.08)
-            {
+            if (random.NextDouble() < 0.08)
                 lineChars[i] = '.';
-            }
         }
 
         if (string.IsNullOrEmpty(text))
@@ -141,6 +141,22 @@ public static class ViewUtils
         string centerPart = highlightText ? $"\x1b[47;30m{text}\x1b[0m" : text;
 
         return leftPart + centerPart + rightPart;
+    }
+
+    public static void WriteFullScreen(IReadOnlyList<string> contentLines)
+    {
+        int h = Console.WindowHeight;
+        int w = Console.WindowWidth;
+        var sb = new StringBuilder(h * w);
+        for (int i = 0; i < h; i++)
+        {
+            sb.Append(i < contentLines.Count
+                ? contentLines[i]
+                : GenerateStarLine(w, string.Empty, false, i + 1));
+            if (i < h - 1) sb.AppendLine();
+        }
+        Console.SetCursorPosition(0, 0);
+        Console.Write(sb.ToString());
     }
 
 }

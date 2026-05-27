@@ -26,9 +26,6 @@ namespace MazeGame.Model.Configuration
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Can't read configuration file: {ex.Message}");
-                Console.WriteLine("Using default config. Press any key...");
-                Console.ReadKey();
                 return new Config();
             }
         }

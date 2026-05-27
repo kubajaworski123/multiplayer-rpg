@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -38,24 +38,15 @@ namespace MazeGame.View.Renderers
 
         public void Render()
         {
-            _sb.Clear();
-            int displayHeight = Console.WindowHeight;
-
-            for (int i = 0; i < displayHeight - 1; i++)
+            var screenLines = new List<string>(Console.WindowHeight);
+            for (int i = 0; i < Console.WindowHeight; i++)
             {
                 int lineIndex = _scrollOffset + i;
-
-                if (lineIndex < _formattedLines.Count)
-                {
-                    _sb.AppendLine(_formattedLines[lineIndex]);
-                }
-                else
-                {
-                    _sb.AppendLine(ViewUtils.GenerateStarLine(Console.WindowWidth - 1, string.Empty));
-                }
+                screenLines.Add(lineIndex < _formattedLines.Count
+                    ? _formattedLines[lineIndex]
+                    : ViewUtils.GenerateStarLine(Console.WindowWidth, string.Empty, false, i + 1));
             }
-            Console.SetCursorPosition(0, 0);
-            Console.Write(_sb);
+            ViewUtils.WriteFullScreen(screenLines);
         }
 
         public void ScrollUp()

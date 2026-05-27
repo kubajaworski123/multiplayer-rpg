@@ -11,10 +11,5 @@ namespace MazeGame.Controller.GameStates
         {
             Render();
         }
-
-        public override void Exit()
-        {
-            Exit();
-        }
     }
 }

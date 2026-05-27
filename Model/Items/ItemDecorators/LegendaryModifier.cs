@@ -10,5 +10,7 @@ namespace MazeGame.Model.Items.ItemDecorators
         public override ItemRarity Rarity => ItemRarity.Legendary;
         public override string Name => $"Legendary " + _decoratedItem.Name;
         public override int Damage => _decoratedItem.Damage + 5;
+
+        protected override void AppendDecoratorTags(List<string> tags) => tags.Add("Legendary");
     }
 }

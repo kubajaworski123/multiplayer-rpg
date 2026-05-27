@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -43,6 +43,12 @@ namespace MazeGame.Model.Characters.PlayerComponents
         {
             Luck += amount;
             if (Luck < 0) Luck = 0;
+        }
+
+        public void ModifyHealth(int amount)
+        {
+            Health += amount;
+            if (Health < 0) Health = 0;
         }
     }
 }

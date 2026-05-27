@@ -1,4 +1,4 @@
-﻿using MazeGame.Model.Dungeon;
+using MazeGame.Model.Dungeon;
 using MazeGame.Model.Items.ItemDecorators;
 using MazeGame.Model.Players;
 
@@ -7,6 +7,7 @@ namespace MazeGame.Model.Items.ItemDecorators
     public abstract class ItemDecorator : Item
     {
         protected Item _decoratedItem;
+        public Item DecoratedItem => _decoratedItem;
         public override ItemRarity Rarity => _decoratedItem.Rarity;
         public override bool IsTwoHanded => _decoratedItem.IsTwoHanded;
         public override int NoiseRange => _decoratedItem.NoiseRange;
@@ -50,6 +51,16 @@ namespace MazeGame.Model.Items.ItemDecorators
             if (player.RightHand == _decoratedItem) 
                 player.RightHand = this;
             player.Backpack.RemoveFromInventory(this);
+        }
+
+        public override void CollectModifierTags(List<string> tags)
+        {
+            AppendDecoratorTags(tags);
+            _decoratedItem.CollectModifierTags(tags);
+        }
+
+        protected virtual void AppendDecoratorTags(List<string> tags)
+        {
         }
     }
 }

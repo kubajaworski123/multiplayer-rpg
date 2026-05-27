@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace MazeGame.Controller.GameStates
@@ -6,6 +6,7 @@ namespace MazeGame.Controller.GameStates
     public class GameStateManager
     {
         private Stack<GameState> _states = new Stack<GameState>();
+        public bool HasActiveState => _states.Count > 0;
 
         public void PushState(GameState state)
         {

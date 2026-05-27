@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -13,7 +13,7 @@ namespace MazeGame.Model.Characters
         public virtual CharacterType Type { get; protected set; } = type;
         public int X { get;  set; } = x;
         public int Y { get;  set; } = y;
-        public void ModifyHealth(int amount)
+        public virtual void ModifyHealth(int amount)
         {
             Health += amount;
             if (Health < 0) Health = 0;

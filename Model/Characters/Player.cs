@@ -1,10 +1,9 @@
-﻿using MazeGame.Model.Characters;
+using MazeGame.Model.Characters;
 using MazeGame.Model.Characters.PlayerComponents;
 using MazeGame.Model.Combat;
 using MazeGame.Model.Dungeon;
 using MazeGame.Model.Items;
 using MazeGame.Model.Weapons;
-using MazeGame.View;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -58,6 +57,12 @@ public class Player : Character, ICombat
             CurrentDefense = Math.Max(CurrentDefense, CurrentAttackStyle.CalculatedPlayerDefense);
         }
     }
+    public override void ModifyHealth(int amount)
+    {
+        base.ModifyHealth(amount);
+        Stats.ModifyHealth(amount);
+    }
+
     public void ReciveDamage(int damageAmount)
     {
         int realDamage = damageAmount - CurrentDefense;
@@ -72,6 +77,14 @@ public class Player : Character, ICombat
         this.Name = name;
     }
     public void Move(Map map, int X, int Y)
+    {
+    }
+
+    public bool Living => false;
+    public bool BlocksSpawnTile => false;
+    public virtual int? NetworkPlayerId => null;
+
+    public void FindPosAndMove(Map map, HashSet<(int x, int y)> blockedPositions)
     {
     }
 }

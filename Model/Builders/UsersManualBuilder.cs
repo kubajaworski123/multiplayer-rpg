@@ -1,4 +1,3 @@
-﻿using MazeGame.Controller;
 using MazeGame.Model.Characters;
 using System;
 using System.Collections.Generic;
@@ -17,7 +16,7 @@ namespace MazeGame.Model.Builders
             "██    ██ ███████ █████   ██████  ███████     ██ ████ ██ ███████ ██ ██  ██ ██    ██ ███████ ██     ", 
             "██    ██      ██ ██      ██   ██      ██     ██  ██  ██ ██   ██ ██  ██ ██ ██    ██ ██   ██ ██     ", 
             " ██████  ███████ ███████ ██   ██ ███████     ██      ██ ██   ██ ██   ████  ██████  ██   ██ ███████",
-            $"PRESS {KeyBinds.HelpKey} TO EXIT THIS PANEL",
+            "PRESS H TO EXIT THIS PANEL",
             " "
         };
 
@@ -51,7 +50,7 @@ namespace MazeGame.Model.Builders
         {
             "ITEMS",
             "In the dungeon you will find various items. They will be marked on a tile on with they are accesible.",
-            $"To pick up an item move to its tile and press {KeyBinds.PickupKey}. If there was enough space in your inventory, it will appear there.",
+            "To pick up an item move to its tile and press E. If there was enough space in your inventory, it will appear there.",
             "You can drop an item from inventory using alt+0-9 bind. It will then appear on players tile.",
             "If there are multiple items on a tile, a number will appear as a tile symbol"
         };
@@ -59,7 +58,7 @@ namespace MazeGame.Model.Builders
         private List<string> _exitStrings = new List<string>()
         {
             "EXITING",
-            $"To exit the game, pres {KeyBinds.ExitKey} key. The console will shut down instantly."
+            "To exit the game, press Escape key. The console will shut down instantly."
         };
         private bool _mobs = false;
         private List<string> _mobsStrings = new List<string>()
@@ -75,7 +74,7 @@ namespace MazeGame.Model.Builders
         private List<string> _logsStrings = new List<string>()
         {
             "LOGS",
-            $"To view all logs, press {KeyBinds.LogsKey} key.",
+            "To view all logs, press L key.",
             $"Logs are a record of all your actions and their outcomes. They are useful for tracking your progress."
         };
         public void BuildCentralHall(int width, int height)

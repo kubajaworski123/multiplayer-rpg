@@ -10,7 +10,7 @@ public abstract class GameState(IRenderer renderer, InputHandler? inputHandler)
     protected IRenderer _renderer = renderer;
     protected InputHandler? _inputHandler = inputHandler;
     public abstract void Enter();
-    public abstract void Exit();
+    public virtual void Exit() { }
     public virtual void Render()
     {
         _renderer?.Prepare();

@@ -52,7 +52,7 @@ namespace MazeGame.View.Renderers
             List<string> middlePanel = new List<string>();
             middlePanel.Add(string.Empty);
 
-            if (_leftActor.Health <= 0)
+            if (_session.Outcome == CombatOutcome.RightWon)
             {
                 middlePanel.AddRange(TextBanners.YOU);
                 middlePanel.Add(string.Empty);
@@ -63,7 +63,7 @@ namespace MazeGame.View.Renderers
                 middlePanel.Add("TO CONTINUE");
 
             }
-            else if (_rightActor.Health <= 0)
+            else if (_session.Outcome == CombatOutcome.LeftWon)
             {
                 middlePanel.AddRange(TextBanners.YOU);
                 middlePanel.Add(string.Empty);

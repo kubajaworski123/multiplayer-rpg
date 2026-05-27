@@ -1,4 +1,4 @@
-﻿using MazeGame.Model.Combat;
+using MazeGame.Model.Combat;
 using MazeGame.Model.Dungeon;
 using MazeGame.Model.Observers;
 using MazeGame.Model.SoundPropagation;
@@ -61,7 +61,11 @@ namespace MazeGame.Model.Characters
         }
         public virtual void Move(Map map, int playerX, int playerY)
         {
-    
+            Move(map, new HashSet<(int, int)> { (playerX, playerY) });
+        }
+
+        public virtual void Move(Map map, HashSet<(int x, int y)> blockedPositions)
+        {
             List<(int x, int y)> validMoves = new List<(int x, int y)>();
 
             (int x, int y)[] dirrections = new (int x, int y)[]
@@ -80,7 +84,7 @@ namespace MazeGame.Model.Characters
 
                 if (newX >= 0 && newX < map.Width && newY >= 0 && newY < map.Height && !map.Tiles[newX, newY].IsWall)
                 {
-                    if (newX != playerX || newY != playerY)
+                    if (!blockedPositions.Contains((newX, newY)))
                     {
                         validMoves.Add((newX, newY));
                     }
@@ -103,5 +107,15 @@ namespace MazeGame.Model.Characters
             }
         }
         public abstract void OnFriendsDeath();
+
+        public bool Living => Type != CharacterType.Dead;
+        public bool BlocksSpawnTile => Type != CharacterType.Dead;
+        public int? NetworkPlayerId => null;
+
+        public void FindPosAndMove(Map map, HashSet<(int x, int y)> blockedPositions)
+        {
+            if (Living)
+                Move(map, blockedPositions);
+        }
     }
 }

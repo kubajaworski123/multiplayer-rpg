@@ -1,8 +1,7 @@
-﻿using MazeGame.Model.Builders;
+using MazeGame.Model.Builders;
 using MazeGame.Model.Characters;
 using MazeGame.Model.Items;
 using MazeGame.Model.Weapons;
-using MazeGame.View;
 using System;
 using System.Collections.Generic;
 using System.Text;

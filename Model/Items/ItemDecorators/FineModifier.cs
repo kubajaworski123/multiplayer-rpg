@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace MazeGame.Model.Items.ItemDecorators
 {
@@ -12,5 +10,7 @@ namespace MazeGame.Model.Items.ItemDecorators
 
         public override int Damage => _decoratedItem.Damage + 2;
         public override ItemRarity Rarity => ItemRarity.Fine;
+
+        protected override void AppendDecoratorTags(List<string> tags) => tags.Add("Fine");
     }
 }

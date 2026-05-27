@@ -25,5 +25,7 @@ namespace MazeGame.Model.Items.ItemDecorators
             base.Drop(player, map);
             player.Stats.ModifyLuck(-5);
         }
+
+        protected override void AppendDecoratorTags(List<string> tags) => tags.Add("Lucky");
     }
 }

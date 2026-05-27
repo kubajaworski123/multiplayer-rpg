@@ -14,9 +14,13 @@ namespace MazeGame.Model.Combat
         int X { get; }
         int Y { get; }
         char Symbol { get; }
+        bool Living { get; }
+        bool BlocksSpawnTile { get; }
+        int? NetworkPlayerId { get; }
         void ReciveDamage(int damage);
         void Attack(ICombat enemy);
         void SetType(CharacterType type);
         void Move(Map map, int x, int y);
+        void FindPosAndMove(Map map, HashSet<(int x, int y)> blockedPositions);
     }
 }

@@ -1,4 +1,4 @@
-﻿using MazeGame.Model.Builders;
+using MazeGame.Model.Builders;
 using MazeGame.Model.Dungeon;
 using MazeGame.Model.Observers;
 using MazeGame.Model.Players;
@@ -65,7 +65,7 @@ public class FrameRenderer(Player player, Map map, List<string> controlsList, Ma
         List<string> stats = new List<string>()
         {
             GetTopSectionWithTitle("STATS", leftPanelWidth),
-            GetSectionContentLine($" HP: {player.Stats.Health}",leftPanelWidth),
+            GetSectionContentLine($" HP: {player.Health}",leftPanelWidth),
             GetSectionContentLine($"STR: {player.Stats.Strength}",leftPanelWidth),
             GetSectionContentLine($"AGI: {player.Stats.Agility}",leftPanelWidth),
             GetSectionContentLine($"WIS: {player.Stats.Wisdom}",leftPanelWidth),
