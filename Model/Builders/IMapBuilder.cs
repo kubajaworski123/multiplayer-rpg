@@ -17,4 +17,5 @@ public interface IMapBuilder
     void AddMobs(int count);
     void AddArtifact();
     void AddMobGroup(Func<Mob> mobCreationDelegate, int count);
+    void AddSlottedItems() { }
 }

@@ -1,8 +1,6 @@
 ﻿using MazeGame.Model.Characters;
+using MazeGame.Model.Characters.Behaviors;
 using MazeGame.Model.Dungeon;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MazeGame.Model.Combat
 {
@@ -17,10 +15,12 @@ namespace MazeGame.Model.Combat
         bool Living { get; }
         bool BlocksSpawnTile { get; }
         int? NetworkPlayerId { get; }
-        void ReciveDamage(int damage);
+        (int x, int y)? AttackPosition { get; }
+        void ReciveDamage(int damage, bool fromPlayer = false);
         void Attack(ICombat enemy);
         void SetType(CharacterType type);
         void Move(Map map, int x, int y);
-        void FindPosAndMove(Map map, HashSet<(int x, int y)> blockedPositions);
+        void FindPosAndMove(MovementContext ctx);
+        void ClearPendingAttack();
     }
 }

@@ -177,7 +177,7 @@ public class NetworkBootstrapper
         var frameRenderer = new NetworkFrameRenderer();
         var combatRenderer = new NetworkCombatRenderer();
         var overlay = new NetworkOverlayManager(state.UsersManual);
-        int lastRevision = -1;
+        int lastGameState = -1;
 
         while (client.CurrentState?.IsRunning == true)
         {
@@ -188,14 +188,14 @@ public class NetworkBootstrapper
             overlay.SyncLogs(state.AllLogs);
             bool overlayActive = overlay.HasOverlay;
 
-            if (!overlayActive && state.GameStateN != lastRevision)
+            if (!overlayActive && state.GameStateN != lastGameState)
             {
                 var combat = state.Combats.FirstOrDefault(c => c.PlayerId == id);
                 if (combat != null)
                     combatRenderer.Render(combat);
                 else
                     frameRenderer.Render(state, id);
-                lastRevision = state.GameStateN;
+                lastGameState = state.GameStateN;
             }
 
             if (Console.KeyAvailable)
@@ -205,7 +205,7 @@ public class NetworkBootstrapper
                 {
                     overlay.HandleInput(key);
                     if (!overlay.HasOverlay)
-                        lastRevision = -1;
+                        lastGameState = -1;
                 }
                 else if (key.Key == KeyBinds.HelpKey)
                 {

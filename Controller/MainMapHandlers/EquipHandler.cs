@@ -24,6 +24,7 @@ public class EquipHandler (Player player, Map map) : InputHandler
         {
             Item item = _player.Backpack.Inventory[x];
             item.Equip(_player, _map);
+            _player.RefreshEquippedBonuses();
             LogBus.Logs.Publish($"Equipped {item.Name}");
         }
     }

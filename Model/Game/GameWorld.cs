@@ -1,4 +1,5 @@
 using MazeGame.Model.Characters;
+using MazeGame.Model.Characters.Behaviors;
 using MazeGame.Model.Combat;
 using MazeGame.Model.Dungeon;
 using MazeGame.Model.Items;
@@ -164,6 +165,7 @@ public class GameWorld
             return GameActionResult.Rejected;
         Item item = player.Backpack.Inventory[index];
         item.Equip(player, Map);
+        player.RefreshEquippedBonuses();
         PublishLog($"Equipped {item.Name}");
         SetStateAsNew();
         return GameActionResult.Ok;
@@ -174,6 +176,12 @@ public class GameWorld
         if (index < 0 || index >= player.Backpack.Inventory.Count) return GameActionResult.Rejected;
         Item item = player.Backpack.Inventory[index];
         item.Drop(player, Map);
+        player.RefreshEquippedBonuses();
+        if (item.NoiseRange > 0)
+        {
+            var soundData = new SoundData(player.X, player.Y, item.NoiseRange, Map, "drop");
+            SoundPublisher.Instance.Publish(soundData);
+        }
         SetStateAsNew();
         return GameActionResult.Ok;
     }
@@ -264,12 +272,49 @@ public class GameWorld
 
     private void MoveMobsForAllPlayers()
     {
-        var occupied = Players.Where(p => p.Health > 0).Select(p => (p.X, p.Y)).ToHashSet();
+        var playerSpots = Players
+            .Where(p => p.Health > 0 && p.IsConnected)
+            .Select(p => new PlayerSpot(p.X, p.Y, p.PlayerId))
+            .ToList();
+        var occupied = playerSpots.Select(p => (p.X, p.Y)).ToHashSet();
+        var ctx = new MovementContext
+        {
+            Map = Map,
+            BlockedPositions = occupied,
+            Players = playerSpots
+        };
         foreach (var combatant in Map.Combatants.ToList())
         {
-            if (combatant.Living)
-                combatant.FindPosAndMove(Map, occupied);
+            if (!combatant.Living)
+                continue;
+            combatant.FindPosAndMove(ctx);
+            TryStartMobInitiatedCombat(combatant);
         }
+    }
+
+    private void TryStartMobInitiatedCombat(ICombat mob)
+    {
+        if (mob.AttackPosition is not { } pos)
+            return;
+        mob.ClearPendingAttack();
+
+        var player = Players.FirstOrDefault(p =>
+            p.Health > 0 && p.IsConnected && p.X == pos.x && p.Y == pos.y);
+        if (player == null)
+            return;
+        if (Combats.ContainsKey(player.PlayerId))
+            return;
+        if (Combats.Values.Any(s => s.RightActor == mob))
+            return;
+
+        var attacks = new List<IAttackVisitor>
+        {
+            new NormalAttackVisitor(player),
+            new StealthAttackVisitor(player),
+            new MagicAttackVisitor(player)
+        };
+        Combats[player.PlayerId] = new CombatSession(player, mob, attacks, LogBus.Logs);
+        PublishLog($"{mob.Name} attacks {player.Name}");
     }
 
     private (int x, int y) FindSpawnPosition()

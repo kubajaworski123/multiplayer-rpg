@@ -24,6 +24,9 @@ public class Item(string name, char symbol) : MapEntity(name, symbol)
     public virtual void CollectModifierTags(List<string> tags)
     {
     }
+    public virtual void CollectStatBonuses(List<Slots.StatBonus> bonuses)
+    {
+    }
     public virtual void Accept(IAttackVisitor visitor, Item context)
     {
         visitor.Visit(this, context);

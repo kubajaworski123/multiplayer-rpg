@@ -279,6 +279,21 @@ public class ConcreteMapBuilder(IDungeonThemeFactory theme) : IMapBuilder
             nonWall[rTile].AddMapEntity(_theme.GetArtifact());
         }
     }
+    public void AddSlottedItems()
+    {
+        var nonWall = _map.GetNonWallTiles();
+        if (nonWall.Count == 0) return;
+
+        PlaceOnRandomTile(nonWall, Items.Slots.SlottedItemFactory.CreateSlottedSword());
+        PlaceOnRandomTile(nonWall, Items.Slots.SlottedItemFactory.CreateSlottedBlaster());
+        PlaceOnRandomTile(nonWall, Items.Slots.SlottedItemFactory.CreateLoadedHandle());
+        PlaceOnRandomTile(nonWall, Items.Slots.SlottedItemFactory.CreateLoadedHandle());
+        PlaceOnRandomTile(nonWall, Items.Slots.SlottedItemFactory.CreateLuckyStone());
+    }
+    private void PlaceOnRandomTile(List<Tile> tiles, Item entity)
+    {
+        tiles[_random.Next(0, tiles.Count)].AddMapEntity(entity);
+    }
     public Map GetMap()
     {
         return _map;

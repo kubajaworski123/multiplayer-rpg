@@ -1,5 +1,6 @@
 using MazeGame.Model.Builders;
 using MazeGame.Model.Characters;
+using MazeGame.Model.Characters.Behaviors;
 using MazeGame.Model.Items;
 using MazeGame.Model.Weapons;
 using System;
@@ -58,13 +59,30 @@ namespace MazeGame.Model.Dungeon.Themes
             builder.BuildCorridors(0);
             builder.AddItems(5);
             builder.AddWeapons(10);
+            builder.AddSlottedItems();
             builder.AddMobs(4);
             builder.AddArtifact();
             MobGroup humans = new MobGroup();
             MobGroup machines = new MobGroup();
-            builder.AddMobGroup(() => new HumanMob(1, 1, humans, "Surface Explorer", '!', 100, CharacterType.BountyHunter, 5, 2), 2);
-            builder.AddMobGroup(() => new MachineMob(1, 1, machines, "Imperial War Machine", '!', 100, CharacterType.Machine, 4, 3), 2);
-            builder.AddMobGroup(() => new MachineMob(1, 1, machines, "Droid Soldier", '!', 100, CharacterType.Droid, 5, 2), 2);
+            MobGroup droids = new MobGroup();
+            builder.AddMobGroup(() =>
+            {
+                var mob = new HumanMob(1, 1, humans, "Surface Explorer", '!', 100, CharacterType.BountyHunter, 5, 2);
+                mob.ConfigureMovement(MobBehaviorProfiles.Cowardly());
+                return mob;
+            }, 2);
+            builder.AddMobGroup(() =>
+            {
+                var mob = new MachineMob(1, 1, machines, "Imperial War Machine", '!', 100, CharacterType.Machine, 4, 3);
+                mob.ConfigureMovement(MobBehaviorProfiles.Aggressive());
+                return mob;
+            }, 2);
+            builder.AddMobGroup(() =>
+            {
+                var mob = new DroidMob(1, 1, droids, "Droid Soldier", 'D', 80, CharacterType.Droid, 5, 2);
+                mob.ConfigureAsNeutral();
+                return mob;
+            }, 2);
         }
     }
 }

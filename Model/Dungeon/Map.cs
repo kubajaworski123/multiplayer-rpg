@@ -1,4 +1,5 @@
 ﻿using MazeGame.Model.Characters;
+using MazeGame.Model.Characters.Behaviors;
 using MazeGame.Model.Combat;
 using MazeGame.Model.MapEntities;
 using System;
@@ -104,10 +105,51 @@ public class Map
     }
     public void MoveMobs(int playerX, int playerY)
     {
+        var ctx = new MovementContext
+        {
+            Map = this,
+            BlockedPositions = new HashSet<(int x, int y)> { (playerX, playerY) },
+            Players = new List<PlayerSpot> { new(playerX, playerY) }
+        };
         foreach (var combatant in Combatants.ToList())
         {
-            combatant.Move(this, playerX, playerY);
+            if (combatant.Living)
+                combatant.FindPosAndMove(ctx);
         }
+    }
+
+    public bool HasLineOfSight(int fromX, int fromY, int toX, int toY, int range)
+    {
+        if (fromX == toX && fromY == toY)
+            return false;
+
+        if (fromX != toX && fromY != toY)
+            return false;
+
+        if (fromX == toX)
+        {
+            int dist = Math.Abs(toY - fromY);
+            if (dist > range)
+                return false;
+            int step = toY > fromY ? 1 : -1;
+            for (int y = fromY + step; y != toY; y += step)
+            {
+                if (Tiles[fromX, y].IsWall)
+                    return false;
+            }
+            return true;
+        }
+
+        int xDist = Math.Abs(toX - fromX);
+        if (xDist > range)
+            return false;
+        int xStep = toX > fromX ? 1 : -1;
+        for (int x = fromX + xStep; x != toX; x += xStep)
+        {
+            if (Tiles[x, fromY].IsWall)
+                return false;
+        }
+        return true;
     }
     public int GetPathDistance(int startX, int startY, int targetX, int targetY)
     {

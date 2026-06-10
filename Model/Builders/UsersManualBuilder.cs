@@ -77,6 +77,14 @@ namespace MazeGame.Model.Builders
             "To view all logs, press L key.",
             $"Logs are a record of all your actions and their outcomes. They are useful for tracking your progress."
         };
+        private bool _slots = false;
+        private List<string> _slotsStrings = new List<string>()
+        {
+            "SLOTTED ITEMS",
+            "Some weapons and handles have slots that hold other items, like stones with stat bonuses.",
+            "Bonuses from items in the slots are added to your character once the holder is equipped.",
+            "Handles can be placed inside weapon and handle slots, nesting and stacking their bonuses."
+        };
         public void BuildCentralHall(int width, int height)
         {
             if (!_move)
@@ -189,6 +197,14 @@ namespace MazeGame.Model.Builders
         }
         public void AddArtifact() { }
         public void AddMobGroup(Func<Mob> mobFactory, int count) { }
+        public void AddSlottedItems()
+        {
+            if (!_slots)
+            {
+                _slots = true;
+                _help.AddRange(_slotsStrings);
+            }
+        }
         public List<string> GetUsersManual()
         {
             return _help;

@@ -61,6 +61,24 @@ public class MovementHandler(Player player, Map map, GameStateManager manager) :
                 else
                 {
                     _map.MoveMobs(_player.X, _player.Y);
+                    var attacker = _map.Combatants.FirstOrDefault(c =>
+                        c.Living && c.AttackPosition == (_player.X, _player.Y));
+                    if (attacker != null)
+                    {
+                        attacker.ClearPendingAttack();
+                        var attacks = new List<IAttackVisitor>()
+                        {
+                            new NormalAttackVisitor(_player),
+                            new StealthAttackVisitor(_player),
+                            new MagicAttackVisitor(_player)
+                        };
+                        var combatSession = new CombatSession(_player, attacker, attacks);
+                        var combatRenderer = new CombatRenderer(_player, attacker, combatSession);
+                        var switchHandler = new SwitchAttackHandler(combatSession);
+                        var choseHandler = new ChooseAttackHandler(_player, combatSession, _stateManager, _map);
+                        choseHandler.SetNextHandler(switchHandler);
+                        _stateManager.PushState(new CombatState(combatRenderer, choseHandler));
+                    }
                 }
 
             }
